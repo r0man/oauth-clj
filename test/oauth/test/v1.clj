@@ -76,10 +76,6 @@
     (is (= ["oauth_version" "1.0"] (nth params 6)))
     (is (= ["status" "Hello Ladies + Gentlemen, a signed OAuth request!"] (nth params 7)))))
 
-(deftest test-oauth-request-signature
-  (let [request (oauth-request-signature example-oauth-request)]
-    (is request)))
-
 (deftest test-oauth-signature
   (is (= "tnnArxj06cWHq44gCs1OSKk/jLY="
          (oauth-signature example-oauth-request))))

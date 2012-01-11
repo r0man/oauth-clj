@@ -27,7 +27,9 @@
 (defn format-base-url [request]
   (str (root-url request) (:uri request)))
 
-(defn oauth-parameters [request]
+(defn oauth-parameters
+  "Returns the OAuth parameters from `request`."
+  [request]
   (let [body (split (:body request) #"=")
         params  (reduce #(concat %1 [(name (first %2)) (str (last %2))]) nil (:query-params request))]
     (assoc (apply sorted-map (map url-decode (concat body params)))
@@ -38,25 +40,31 @@
       "oauth_token" (:oauth-token request)
       "oauth_version" (:oauth-version request))))
 
-(defn oauth-parameter-string [request]
+(defn oauth-parameter-string
+  "Returns the OAuth parameter string from `request`."
+  [request]
   (->> (oauth-parameters request)
        (map #(str (percent-encode (first %1)) "=" (percent-encode (last %1))))
        (join "&")))
 
-(defn oauth-signature-base-string [request]
+(defn oauth-signature-base-string
+  "Returns the OAuth signature base string from `request`."
+  [request]
   (->> [(format-http-method request)
         (percent-encode (format-base-url request))
         (percent-encode (oauth-parameter-string request))]
        (join "&")))
 
-(defn oauth-request-signature [request]
-  (oauth-signature-base-string request))
+(defn oauth-signing-key
+  "Returns the OAuth signing key from `request`. The signing gets
+  constructed from the :oauth-consumer-secret and :oauth-token-secret
+  keys in `request`."
+  [request] (str (:oauth-consumer-secret request) "&" (:oauth-token-secret request)))
 
-(defn oauth-signing-key [request]
-  (str (:oauth-consumer-secret request) "&" (:oauth-token-secret request)))
-
-(defn oauth-signature [request]
+(defn oauth-signature
+  "Calculates the OAuth signature from `request`."
+  [request]
   (-> (hmac "HmacSHA1"
-         (oauth-signature-base-string request)
-         (oauth-signing-key request))
+            (oauth-signature-base-string request)
+            (oauth-signing-key request))
       (base64-encode)))
