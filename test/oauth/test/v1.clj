@@ -17,10 +17,22 @@
    :scheme "https"
    :server-name "api.twitter.com"
    :uri "/1/statuses/update.json"
-   :query-params {:include_entities true}})
+   :query-params {:include_entities true}
+   :body "status=Hello%20Ladies%20%2b%20Gentlemen%2c%20a%20signed%20OAuth%20request%21"})
+
+(deftest test-format-base-url
+  (are [request expected]
+    (is (= expected (format-base-url request)))
+    example-request "https://api.twitter.com/1/statuses/update.json"))
 
 (deftest test-format-header
   (= (str "OAuth" (format-options example-options)) (format-header example-options)))
+
+(deftest test-format-http-method
+  (are [request expected]
+    (is (= expected (format-http-method request)))
+    {:method :get} "GET"
+    {:request-method :get} "GET"))
 
 (deftest test-format-options
   (= (str "oauth_token=\"370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb\", "

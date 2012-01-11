@@ -19,8 +19,14 @@
 (defn root-url [{:keys [scheme server-name server-port]}]
   (str scheme "://" server-name (when server-port (str ":" server-port))))
 
+(defn format-http-method [request]
+  (upper-case (name (or (:method request) (:request-method request)))))
+
+(defn format-base-url [request]
+  (str (root-url request) (:uri request)))
+
 (defn oauth-signature-base-string [request]
-  (->> [(upper-case (name (or (:method request) (:request-method request))))
+  (->> [(format-http-method request)
         (url-encode (root-url request))
         (url-encode (http/generate-query-string (:query-params request)))]
        (join "&")))
