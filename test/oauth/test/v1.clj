@@ -5,11 +5,13 @@
 
 (def example-options
   {:oauth-consumer-key "xvz1evFS4wEEPTGEFPHBog"
+   :oauth-consumer-secret "kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw"
    :oauth-nonce "kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg"
    :oauth-signature "tnnArxj06cWHq44gCs1OSKk/jLY="
    :oauth-signature-method "HMAC-SHA1"
    :oauth-timestamp "1318622958"
    :oauth-token "370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb"
+   :oauth-token-secret "LswwdoUaIvS8ltyTt5jkRh4J50vUPVVHtR2YPi5kE"
    :oauth-version "1.0"})
 
 (def example-request
@@ -47,15 +49,6 @@
           "oauth_consumer_key=\"xvz1evFS4wEEPTGEFPHBog\"")
      (format-options example-options)))
 
-(deftest test-percent-encode
-  (are [unencoded expected]
-    (is (= expected (percent-encode unencoded)))
-    "" ""
-    "Ladies + Gentlemen" "Ladies%20%2B%20Gentlemen"
-    "An encoded string!" "An%20encoded%20string%21"
-    "Dogs, Cats & Mice" "Dogs%2C%20Cats%20%26%20Mice"
-    "☃" "%E2%98%83")) ; https://dev.twitter.com/docs/auth/percent-encoding-parameters
-
 (deftest test-root-url
   (is (= "https://api.twitter.com" (root-url example-request))))
 
@@ -84,9 +77,26 @@
     (is (= ["status" "Hello Ladies + Gentlemen, a signed OAuth request!"] (nth params 7)))))
 
 (deftest test-oauth-request-signature
-  (let [request (oauth-request-signature example-request)]
+  (let [request (oauth-request-signature example-oauth-request)]
     (is request)))
 
+(deftest test-oauth-signature
+  (is (= "tnnArxj06cWHq44gCs1OSKk/jLY="
+         (oauth-signature example-oauth-request))))
+
 (deftest test-oauth-signature-base-string
-  (is (= "POST&https%3A%2F%2Fapi.twitter.com&include_entities%3Dtrue"
-         (oauth-signature-base-string example-request))))
+  (is (= (str "POST&"
+              "https%3A%2F%2Fapi.twitter.com%2F1%2Fstatuses%2Fupdate.json&"
+              "include_entities%3Dtrue%26"
+              "oauth_consumer_key%3Dxvz1evFS4wEEPTGEFPHBog%26"
+              "oauth_nonce%3DkYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg%26"
+              "oauth_signature_method%3DHMAC-SHA1%26"
+              "oauth_timestamp%3D1318622958%26"
+              "oauth_token%3D370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb%26"
+              "oauth_version%3D1.0%26"
+              "status%3DHello%2520Ladies%2520%252B%2520Gentlemen%252C%2520a%2520signed%2520OAuth%2520request%2521")
+         (oauth-signature-base-string example-oauth-request))))
+
+(deftest test-oauth-signing-key
+  (is (= "kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw&LswwdoUaIvS8ltyTt5jkRh4J50vUPVVHtR2YPi5kE"
+         (oauth-signing-key example-oauth-request))))

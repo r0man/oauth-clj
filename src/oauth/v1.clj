@@ -1,9 +1,10 @@
 (ns oauth.v1
   (:refer-clojure :exclude (replace))
   (:require [clj-http.client :as http])
-  (:use [clj-http.util :only (url-encode url-decode)]
+  (:use [clj-http.util :only (base64-encode url-encode url-decode)]
         [clojure.string :only (join replace split upper-case)]
-        [inflections.core :only (underscore)]))
+        [inflections.core :only (underscore)]
+        oauth.util))
 
 (def ^:dynamic *oauth-consumer-key* nil)
 
@@ -17,14 +18,6 @@
 (defn format-header [options]
   (str "OAuth " (join ", " (format-options options))))
 
-(defn percent-encode
-  "Percent encode `unencoded` according to RFC 3986, Section 2.1."
-  [unencoded]
-  (-> (url-encode unencoded)
-      (replace "%7E" "~")
-      (replace "*" "%2A")
-      (replace "+" "%20")))
-
 (defn root-url [{:keys [scheme server-name server-port]}]
   (str scheme "://" server-name (when server-port (str ":" server-port))))
 
@@ -33,15 +26,6 @@
 
 (defn format-base-url [request]
   (str (root-url request) (:uri request)))
-
-(defn oauth-signature-base-string [request]
-  (->> [(format-http-method request)
-        (url-encode (root-url request))
-        (url-encode (http/generate-query-string (:query-params request)))]
-       (join "&")))
-
-(defn oauth-request-signature [request]
-  (oauth-signature-base-string request))
 
 (defn oauth-parameters [request]
   (let [body (split (:body request) #"=")
@@ -59,10 +43,20 @@
        (map #(str (percent-encode (first %1)) "=" (percent-encode (last %1))))
        (join "&")))
 
-;; (prn (oauth-parameters
-;;       {:method :post
-;;        :scheme "https"
-;;        :server-name "api.twitter.com"
-;;        :uri "/1/statuses/update.json"
-;;        :query-params {:include_entities true}
-;;        :body "status=Hello%20Ladies%20%2b%20Gentlemen%2c%20a%20signed%20OAuth%20request%21"}))
+(defn oauth-signature-base-string [request]
+  (->> [(format-http-method request)
+        (percent-encode (format-base-url request))
+        (percent-encode (oauth-parameter-string request))]
+       (join "&")))
+
+(defn oauth-request-signature [request]
+  (oauth-signature-base-string request))
+
+(defn oauth-signing-key [request]
+  (str (:oauth-consumer-secret request) "&" (:oauth-token-secret request)))
+
+(defn oauth-signature [request]
+  (-> (hmac "HmacSHA1"
+         (oauth-signature-base-string request)
+         (oauth-signing-key request))
+      (base64-encode)))

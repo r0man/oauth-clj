@@ -1,3 +1,4 @@
 lib
 /.lein-deps-sum
 /.lein-failures
+/logs/debug.log
