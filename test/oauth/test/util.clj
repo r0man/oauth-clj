@@ -10,3 +10,10 @@
     "An encoded string!" "An%20encoded%20string%21"
     "Dogs, Cats & Mice" "Dogs%2C%20Cats%20%26%20Mice"
     "☃" "%E2%98%83")) ; https://dev.twitter.com/docs/auth/percent-encoding-parameters
+
+(deftest test-random-base64
+  (is (string? (random-base64 1)))
+  (is (not (= (random-base64 1) (random-base64 1)))))
+
+(deftest test-random-bytes
+  (is (not (= (seq (random-bytes 1)) (seq (random-bytes 1))))))

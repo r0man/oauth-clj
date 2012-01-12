@@ -1,8 +1,22 @@
 (ns oauth.util
   (:refer-clojure :exclude (replace))
-  (:import javax.crypto.Mac javax.crypto.spec.SecretKeySpec)
-  (:use [clj-http.util :only (url-encode url-decode)]
+  (:import java.security.SecureRandom
+           javax.crypto.Mac
+           javax.crypto.spec.SecretKeySpec)
+  (:use [clj-http.util :only (base64-encode url-encode url-decode)]
         [clojure.string :only (replace)]))
+
+(defn random-bytes
+  "Returns a random byte array of the specified size."
+  [size]
+  (let [seed (byte-array size)]
+    (.nextBytes (SecureRandom/getInstance "SHA1PRNG") seed)
+    seed))
+
+(defn random-base64
+  "Returns a Base64 encoded string from a random byte array of the
+  specified size."
+  [size] (base64-encode (random-bytes size)))
 
 (defn hmac
   ([^String algorithm ^String msg ^String key]
