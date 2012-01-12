@@ -6,18 +6,6 @@
   (:use [clj-http.util :only (base64-encode url-encode url-decode)]
         [clojure.string :only (replace)]))
 
-(defn random-bytes
-  "Returns a random byte array of the specified size."
-  [size]
-  (let [seed (byte-array size)]
-    (.nextBytes (SecureRandom/getInstance "SHA1PRNG") seed)
-    seed))
-
-(defn random-base64
-  "Returns a Base64 encoded string from a random byte array of the
-  specified size."
-  [size] (base64-encode (random-bytes size)))
-
 (defn hmac
   ([^String algorithm ^String msg ^String key]
      (hmac algorithm msg key "UTF8"))
@@ -34,3 +22,20 @@
       (replace "%7E" "~")
       (replace "*" "%2A")
       (replace "+" "%20")))
+
+(defn random-bytes
+  "Returns a random byte array of the specified size."
+  [size]
+  (let [seed (byte-array size)]
+    (.nextBytes (SecureRandom/getInstance "SHA1PRNG") seed)
+    seed))
+
+(defn random-base64
+  "Returns a Base64 encoded string from a random byte array of the
+  specified size."
+  [size] (base64-encode (random-bytes size)))
+
+(defn select-oauth-keys
+  "Returns a map containing only the OAuth entries."
+  [map] (->> (filter #(.startsWith (name %1) "oauth-") (keys map))
+             (select-keys map)))
