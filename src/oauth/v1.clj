@@ -68,3 +68,7 @@
             (oauth-signature-base-string request)
             (oauth-signing-key request))
       (base64-encode)))
+
+(defn oauth-timestamp
+  "Returns the Oauth timestamp."
+  [] (.getTime (java.util.Date.)))

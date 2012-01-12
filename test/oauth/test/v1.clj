@@ -96,3 +96,6 @@
 (deftest test-oauth-signing-key
   (is (= "kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw&LswwdoUaIvS8ltyTt5jkRh4J50vUPVVHtR2YPi5kE"
          (oauth-signing-key example-oauth-request))))
+
+(deftest test-oauth-timestamp
+  (is (number? (oauth-timestamp))))
