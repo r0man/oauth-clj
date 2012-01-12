@@ -18,8 +18,16 @@
 (deftest test-random-bytes
   (is (not (= (seq (random-bytes 1)) (seq (random-bytes 1))))))
 
+(deftest test-select-oauth-keys
+  (are [map expected]
+    (is (= expected (select-oauth-keys map)))
+    {} []
+    {:oauth-signature-method "HMAC-SHA1" :oauth-version "1.0" :other-key "x"}
+    [:oauth-signature-method :oauth-version]))
+
 (deftest test-select-oauth-map
   (are [map expected]
     (is (= expected (select-oauth-map map)))
+    {} {}
     {:oauth-signature-method "HMAC-SHA1" :oauth-version "1.0" :other-key "x"}
     {:oauth-signature-method "HMAC-SHA1" :oauth-version "1.0"}))
