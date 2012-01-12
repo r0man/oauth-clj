@@ -52,6 +52,10 @@
 (deftest test-root-url
   (is (= "https://api.twitter.com" (root-url example-request))))
 
+(deftest test-oauth-nonce
+  (is (string? (oauth-nonce)))
+  (is (not (= (oauth-nonce) (oauth-nonce)))))
+
 (deftest test-oauth-parameter-string
   (is (= (str "include_entities=true&"
               "oauth_consumer_key=xvz1evFS4wEEPTGEFPHBog&"

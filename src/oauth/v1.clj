@@ -69,6 +69,10 @@
             (oauth-signing-key request))
       (base64-encode)))
 
+(defn oauth-nonce
+  "Returns the OAuth nonce."
+  [] (random-base64 32))
+
 (defn oauth-timestamp
   "Returns the current timestamp for an OAuth request."
   [] (.getTime (java.util.Date.)))
