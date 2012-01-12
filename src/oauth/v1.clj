@@ -70,5 +70,5 @@
       (base64-encode)))
 
 (defn oauth-timestamp
-  "Returns the Oauth timestamp."
+  "Returns the current timestamp for an OAuth request."
   [] (.getTime (java.util.Date.)))
