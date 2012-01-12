@@ -35,7 +35,7 @@
   specified size."
   [size] (base64-encode (random-bytes size)))
 
-(defn select-oauth-keys
+(defn select-oauth-map
   "Returns a map containing only the OAuth entries."
   [map] (->> (filter #(.startsWith (name %1) "oauth-") (keys map))
              (select-keys map)))
