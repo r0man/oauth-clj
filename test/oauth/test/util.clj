@@ -1,6 +1,13 @@
 (ns oauth.test.util
-  (:use clojure.test
+  (:use [clojure.string :only (blank?)]
+        clojure.test
         oauth.util))
+
+(deftest test-compact-map
+  (is (= {} (compact-map {})))
+  (is (= {:a "1"} (compact-map {:a "1"})))
+  (is (= {:a "1"} (compact-map {:a "1" :b nil})))
+  (is (= {:a "1"} (compact-map {:a "1" :b ""} blank?))))
 
 (deftest test-percent-encode
   (are [unencoded expected]

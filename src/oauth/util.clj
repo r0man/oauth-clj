@@ -6,6 +6,15 @@
   (:use [clj-http.util :only (base64-encode url-encode url-decode)]
         [clojure.string :only (replace)]))
 
+(defn compact-map
+  "Returns a `map` with all entries removed, where the entrie's value
+  matches `pred`."
+  [map & [pred]]
+  (let [pred (or pred nil?)]
+    (reduce
+     #(if (pred (%2 map)) %1 (assoc %1 %2 (%2 map)))
+     {} (keys map))))
+
 (defn hmac
   ([^String algorithm ^String msg ^String key]
      (hmac algorithm msg key "UTF8"))
