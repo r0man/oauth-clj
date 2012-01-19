@@ -29,7 +29,7 @@
   (are [request expected]
     (is (= expected (parse-body-params request)))
     {} nil
-    create-signature-request {"status" "Hello Ladies + Gentlemen, a signed OAuth request!"}))
+    twitter-update-status {"status" "Hello Ladies + Gentlemen, a signed OAuth request!"}))
 
 (deftest test-random-base64
   (is (string? (random-base64 1)))

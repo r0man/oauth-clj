@@ -6,7 +6,7 @@
 (def oauth-token-secret
   "LswwdoUaIvS8ltyTt5jkRh4J50vUPVVHtR2YPi5kE")
 
-(def create-signature-request
+(def twitter-update-status
   {:method :post
    :scheme "https"
    :server-name "api.twitter.com"

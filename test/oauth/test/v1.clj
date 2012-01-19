@@ -16,7 +16,7 @@
 (deftest test-format-base-url
   (are [request expected]
     (is (= expected (format-base-url request)))
-    create-signature-request "https://api.twitter.com/1/statuses/update.json"))
+    twitter-update-status "https://api.twitter.com/1/statuses/update.json"))
 
 (deftest test-format-authorization
   (= (str "OAuth" (format-options example-options)) (format-authorization example-options)))
@@ -40,7 +40,7 @@
 (deftest test-root-url
   (are [request expected]
     (is (= expected (root-url request)))
-    create-signature-request "https://api.twitter.com"))
+    twitter-update-status "https://api.twitter.com"))
 
 (deftest test-oauth-authorization-header
   (is (= (str "OAuth oauth_consumer_key=\"xvz1evFS4wEEPTGEFPHBog\", "
@@ -48,7 +48,7 @@
               "oauth_signature_method=\"HMAC-SHA1\", oauth_timestamp=\"1318622958\", "
               "oauth_token=\"370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb\", "
               "oauth_version=\"1.0\"")
-         (oauth-authorization-header create-signature-request))))
+         (oauth-authorization-header twitter-update-status))))
 
 (deftest test-oauth-nonce
   (is (string? (oauth-nonce)))
@@ -63,12 +63,12 @@
               "oauth_token=370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb&"
               "oauth_version=1.0&"
               "status=Hello%20Ladies%20%2B%20Gentlemen%2C%20a%20signed%20OAuth%20request%21")
-         (oauth-parameter-string create-signature-request))))
+         (oauth-parameter-string twitter-update-status))))
 
 (deftest test-oauth-signature-parameters
   (is (= {} (oauth-signature-parameters nil)))
   (is (= {} (oauth-signature-parameters {})))
-  (let [params (oauth-signature-parameters create-signature-request)]
+  (let [params (oauth-signature-parameters twitter-update-status)]
     (is (= 8 (count params)))
     (is (= true (get params "include_entities")))
     (is (= "xvz1evFS4wEEPTGEFPHBog" (get params "oauth_consumer_key")))
@@ -81,7 +81,7 @@
 
 (deftest test-oauth-request-signature
   (is (= "tnnArxj06cWHq44gCs1OSKk/jLY="
-         (oauth-request-signature create-signature-request oauth-consumer-secret oauth-token-secret)))
+         (oauth-request-signature twitter-update-status oauth-consumer-secret oauth-token-secret)))
   (is (= "8wUi7m5HFQy76nowoCThusfgB+Q="
          (oauth-request-signature twitter-request-token "MCD8BKwGdgPHvAuvgvz4EQpqDAtx89grbuNMRd7Eh98" nil))))
 
@@ -96,7 +96,7 @@
               "oauth_token%3D370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb%26"
               "oauth_version%3D1.0%26"
               "status%3DHello%2520Ladies%2520%252B%2520Gentlemen%252C%2520a%2520signed%2520OAuth%2520request%2521")
-         (oauth-signature-base-string create-signature-request)))
+         (oauth-signature-base-string twitter-update-status)))
   (is (= (str "POST&"
               "https%3A%2F%2Fapi.twitter.com%2Foauth%2Frequest_token&"
               "oauth_callback%3Dhttp%253A%252F%252Flocalhost%253A3005%252Fthe_dance%252Fprocess_callback%253Fservice_provider_id%253D11%26"
@@ -121,7 +121,7 @@
   ((wrap-oauth-sign-request
     #(is (= "tnnArxj06cWHq44gCs1OSKk/jLY=" (:oauth-signature %1)))
     oauth-consumer-secret oauth-token-secret)
-   create-signature-request))
+   twitter-update-status))
 
 (deftest test-make-consumer
   (let [consumer (make-consumer oauth-consumer-secret oauth-token-secret)]
