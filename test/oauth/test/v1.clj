@@ -4,22 +4,13 @@
         oauth.test.examples
         oauth.v1))
 
-(def example-options
-  {:oauth-consumer-key "xvz1evFS4wEEPTGEFPHBog"
-   :oauth-nonce "kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg"
-   :oauth-signature "tnnArxj06cWHq44gCs1OSKk/jLY="
-   :oauth-signature-method "HMAC-SHA1"
-   :oauth-timestamp "1318622958"
-   :oauth-token "370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb"
-   :oauth-version "1.0"})
-
 (deftest test-format-base-url
   (are [request expected]
     (is (= expected (format-base-url request)))
     twitter-update-status "https://api.twitter.com/1/statuses/update.json"))
 
 (deftest test-format-authorization
-  (= (str "OAuth" (format-options example-options)) (format-authorization example-options)))
+  (= (str "OAuth" (format-options twitter-update-status)) (format-authorization twitter-update-status)))
 
 (deftest test-format-http-method
   (are [request expected]
@@ -35,7 +26,7 @@
           "oauth_nonce=\"kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg\", "
           "oauth_version=\"1.0\", "
           "oauth_consumer_key=\"xvz1evFS4wEEPTGEFPHBog\"")
-     (format-options example-options)))
+     (format-options twitter-update-status)))
 
 (deftest test-root-url
   (are [request expected]
