@@ -9,6 +9,12 @@
   (is (= {:a "1"} (compact-map {:a "1" :b nil})))
   (is (= {:a "1"} (compact-map {:a "1" :b ""} blank?))))
 
+(deftest test-parse-respone
+  (are [response expected]
+    (is (= expected (parse-response response)))
+    "oauth_token=Z6eEdO8MOmk394WozF5oKyuAv855l4Mlqo7hhlSLik&oauth_callback_confirmed=true"
+    {:oauth-callback-confirmed "true" :oauth-token "Z6eEdO8MOmk394WozF5oKyuAv855l4Mlqo7hhlSLik"}))
+
 (deftest test-percent-encode
   (are [unencoded expected]
     (is (= expected (percent-encode unencoded)))

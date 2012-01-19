@@ -4,7 +4,8 @@
            javax.crypto.Mac
            javax.crypto.spec.SecretKeySpec)
   (:use [clj-http.util :only (base64-encode url-encode url-decode)]
-        [clojure.string :only (replace)]))
+        [clojure.string :only (replace split)]
+        [inflections.core :only (hyphenize)]))
 
 (defn compact-map
   "Returns a `map` with all entries removed, where the entrie's value
@@ -23,6 +24,14 @@
            mac (doto (Mac/getInstance algorithm)
                  (.init key))]
        (.doFinal mac (.getBytes msg encoding)))))
+
+(defn parse-response
+  "Parse `response` and return a map with hypenized keys and their values."
+  [response]
+  (reduce
+   #(let [[k v] (split %2 #"=")]
+      (assoc %1 (hyphenize (keyword k)) v))
+   {} (split response #"&")))
 
 (defn percent-encode
   "Percent encode `unencoded` according to RFC 3986, Section 2.1."
