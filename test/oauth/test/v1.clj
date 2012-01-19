@@ -18,8 +18,8 @@
     (is (= expected (format-base-url request)))
     create-signature-request "https://api.twitter.com/1/statuses/update.json"))
 
-(deftest test-format-authorization-header
-  (= (str "OAuth" (format-options example-options)) (format-authorization-header example-options)))
+(deftest test-format-authorization
+  (= (str "OAuth" (format-options example-options)) (format-authorization example-options)))
 
 (deftest test-format-http-method
   (are [request expected]

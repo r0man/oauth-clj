@@ -34,7 +34,7 @@
 (defn format-options [options]
   (map format-option (sort options)))
 
-(defn format-authorization-header [options]
+(defn format-authorization [options]
   (str "OAuth "(join ", " (format-options options))))
 
 (defn root-url [{:keys [scheme server-name server-port]}]
@@ -51,7 +51,7 @@
   [request]
   (-> (select-keys request oauth-authorization-keys)
       (transform-keys (comp name underscore))
-      (format-authorization-header)))
+      (format-authorization)))
 
 (defn oauth-signature-parameters
   "Returns the OAuth signature parameters from `request`."
