@@ -98,6 +98,7 @@
   request."
   [client]
   (fn [request]
+    (clojure.pprint/pprint request)
     (-> (assoc-in
          request [:headers "Authorization"]
          (oauth-authorization-header request))
@@ -105,7 +106,7 @@
 
 (defn wrap-oauth-default-params
   "Returns a HTTP client with OAuth"
-  [client & params]
+  [client & [params]]
   (fn [request]
     (->> {:oauth-nonce (oauth-nonce)
           :oauth-signature-method *oauth-signature-method*
@@ -123,22 +124,16 @@
 (defn make-consumer
   "Returns an OAuth consumer HTTP client."
   [oauth-keys]
-  (-> http/request
+  (-> clj-http.core/request
       (wrap-oauth-authorize-request)
       (wrap-oauth-sign-request)
-      (wrap-oauth-default-params oauth-keys)))
+      (wrap-oauth-default-params oauth-keys)
+      (http/wrap-request)))
 
-;; (def request (make-consumer {:oauth-consumer-secret "0NKq8e0RoSVR1kOmWcYyg"}))
-
-;; (request twitter-request-token)
-
-;; (def request
-;;   (-> ;; http/request
-;;    (fn [request]
-;;      (assoc request :status 200 :body ""))
-;;    (wrap-oauth-authorize-request)
-;;    (wrap-oauth-sign-request "kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw" "LswwdoUaIvS8ltyTt5jkRh4J50vUPVVHtR2YPi5kE")
-;;    (wrap-oauth-default-params)))
+;; (request
+;;  {:method :post
+;;   :url "https://api.twitter.com/oauth/request_token"
+;;   :oauth-callback "http://localhost:3005/the_dance/process_callback?service_provider_id=11"})
 
 ;; (request
 ;;  {:method :post
@@ -153,24 +148,3 @@
 ;;   :oauth-timestamp "1318622958"
 ;;   :oauth-token "370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb"
 ;;   :oauth-version "1.0"})
-
-;; (request
-;;  {:method :post
-;;   :url "http://api.twitter.com/oauth/request_token"
-;;   :oauth-callback "http://localhost:3005/the_dance/process_callback?service_provider_id=11"
-;;   :oauth-consumer-key "GDdmIQH6jhtmLUypg82g" })
-
-;; (println
-;;  (oauth-auth-headers
-;;   {:method :post
-;;    :scheme "https"
-;;    :server-name "api.twitter.com"
-;;    :uri "/1/statuses/update.json"
-;;    :query-params {:include_entities true}
-;;    :body "status=Hello%20Ladies%20%2b%20Gentlemen%2c%20a%20signed%20OAuth%20request%21"
-;;    :oauth-consumer-key "xvz1evFS4wEEPTGEFPHBog"
-;;    :oauth-nonce "kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg"
-;;    :oauth-signature-method "HMAC-SHA1"
-;;    :oauth-timestamp "1318622958"
-;;    :oauth-token "370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb"
-;;    :oauth-version "1.0"}))
