@@ -18,8 +18,8 @@
     (is (= expected (format-base-url request)))
     create-signature-request "https://api.twitter.com/1/statuses/update.json"))
 
-(deftest test-format-header
-  (= (str "OAuth" (format-options example-options)) (format-header example-options)))
+(deftest test-format-authorization-header
+  (= (str "OAuth" (format-options example-options)) (format-authorization-header example-options)))
 
 (deftest test-format-http-method
   (are [request expected]
@@ -41,6 +41,14 @@
   (are [request expected]
     (is (= expected (root-url request)))
     create-signature-request "https://api.twitter.com"))
+
+(deftest test-oauth-authorization-header
+  (is (= (str "OAuth oauth_consumer_key=\"xvz1evFS4wEEPTGEFPHBog\", "
+              "oauth_nonce=\"kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg\", "
+              "oauth_signature_method=\"HMAC-SHA1\", oauth_timestamp=\"1318622958\", "
+              "oauth_token=\"370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb\", "
+              "oauth_version=\"1.0\"")
+         (oauth-authorization-header create-signature-request))))
 
 (deftest test-oauth-nonce
   (is (string? (oauth-nonce)))
@@ -73,7 +81,9 @@
 
 (deftest test-oauth-request-signature
   (is (= "tnnArxj06cWHq44gCs1OSKk/jLY="
-         (oauth-request-signature create-signature-request oauth-consumer-secret oauth-token-secret))))
+         (oauth-request-signature create-signature-request oauth-consumer-secret oauth-token-secret)))
+  (is (= "8wUi7m5HFQy76nowoCThusfgB+Q="
+         (oauth-request-signature twitter-request-token "MCD8BKwGdgPHvAuvgvz4EQpqDAtx89grbuNMRd7Eh98" nil))))
 
 (deftest test-oauth-signature-base-string
   (is (= (str "POST&"
@@ -86,7 +96,16 @@
               "oauth_token%3D370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb%26"
               "oauth_version%3D1.0%26"
               "status%3DHello%2520Ladies%2520%252B%2520Gentlemen%252C%2520a%2520signed%2520OAuth%2520request%2521")
-         (oauth-signature-base-string create-signature-request))))
+         (oauth-signature-base-string create-signature-request)))
+  (is (= (str "POST&"
+              "https%3A%2F%2Fapi.twitter.com%2Foauth%2Frequest_token&"
+              "oauth_callback%3Dhttp%253A%252F%252Flocalhost%253A3005%252Fthe_dance%252Fprocess_callback%253Fservice_provider_id%253D11%26"
+              "oauth_consumer_key%3DGDdmIQH6jhtmLUypg82g%26"
+              "oauth_nonce%3DQP70eNmVz8jvdPevU3oJD2AfF7R7odC2XJcn4XlZJqk%26"
+              "oauth_signature_method%3DHMAC-SHA1%26"
+              "oauth_timestamp%3D1272323042%26"
+              "oauth_version%3D1.0")
+         (oauth-signature-base-string twitter-request-token))))
 
 (deftest test-oauth-signing-key
   (are [consumer-secret token-secret expected]
@@ -103,3 +122,7 @@
     #(is (= "tnnArxj06cWHq44gCs1OSKk/jLY=" (:oauth-signature %1)))
     oauth-consumer-secret oauth-token-secret)
    create-signature-request))
+
+(deftest test-make-consumer
+  (let [consumer (make-consumer oauth-consumer-secret oauth-token-secret)]
+    (is (fn? consumer))))

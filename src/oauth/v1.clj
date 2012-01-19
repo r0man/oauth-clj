@@ -28,11 +28,14 @@
     :oauth-token
     :oauth-version})
 
-(defn format-options [options]
-  (map #(format "%s=\"%s\"" (underscore (name (first %1))) (url-encode (last %1))) options))
+(defn format-option [[k v]]
+  (format "%s=\"%s\"" (underscore (name k)) (url-encode (str v))))
 
-(defn format-header [options]
-  (str "OAuth " (join ", " (format-options options))))
+(defn format-options [options]
+  (map format-option (sort options)))
+
+(defn format-authorization-header [options]
+  (str "OAuth "(join ", " (format-options options))))
 
 (defn root-url [{:keys [scheme server-name server-port]}]
   (str scheme "://" server-name (when server-port (str ":" server-port))))
@@ -42,6 +45,13 @@
 
 (defn format-base-url [request]
   (str (root-url request) (:uri request)))
+
+(defn oauth-authorization-header
+  "Returns the OAuth header of `request`."
+  [request]
+  (-> (select-keys request oauth-authorization-keys)
+      (transform-keys (comp name underscore))
+      (format-authorization-header)))
 
 (defn oauth-signature-parameters
   "Returns the OAuth signature parameters from `request`."
@@ -64,8 +74,7 @@
 
 (defn oauth-signing-key
   "Returns the OAuth signing key."
-  [oauth-consumer-secret oauth-token-secret]
-  (str oauth-consumer-secret "&" oauth-token-secret))
+  [key secret] (str key "&" secret))
 
 (defn oauth-request-signature
   "Calculates the OAuth signature from `request`."
@@ -83,7 +92,19 @@
   "Returns the current timestamp for an OAuth request."
   [] (.getTime (java.util.Date.)))
 
-(defn wrap-oauth-request [client]
+(defn wrap-oauth-authorize-request
+  "Returns a HTTP client that adds the OAuth authorization header to
+  request."
+  [client]
+  (fn [request]
+    (-> (assoc-in
+         request [:headers "Authorization"]
+         (oauth-authorization-header request))
+        (client))))
+
+(defn wrap-oauth-default-request
+  "Returns a HTTP client with OAuth"
+  [client]
   (fn [request]
     (-> {:oauth-nonce (oauth-nonce)
          :oauth-signature-method *oauth-signature-method*
@@ -100,37 +121,57 @@
     (let [signature (oauth-request-signature request consumer-secret token-secret)]
       (client (assoc request :oauth-signature signature)))))
 
-(def request
-  (-> ;; http/request
-   (fn [request]
-     (assoc request :status 200 :body ""))
-   (wrap-oauth-sign-request "xvz1evFS4wEEPTGEFPHBog" "370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb")
-   (wrap-oauth-request)))
+(defn make-consumer
+  "Returns an OAuth consumer HTTP client."
+  [consumer-secret token-secret]
+  (-> http/request
+      (wrap-oauth-authorize-request)
+      (wrap-oauth-sign-request consumer-secret token-secret)
+      (wrap-oauth-default-request)))
 
-(def request
-  (-> ;; http/request
-   (fn [request]
-     (assoc request :status 200 :body ""))
-   (wrap-oauth-sign-request "kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw" "LswwdoUaIvS8ltyTt5jkRh4J50vUPVVHtR2YPi5kE")
-   ;; (wrap-oauth-request)
-   ))
+;; (def request (make-consumer "0NKq8e0RoSVR1kOmWcYyg" "1YwAbw0ZmwPjEQsGE6l0tkA9ifjSXJgkVxxrrgiZ0s"))
 
-(request
- {:method :post
-  :scheme "https"
-  :server-name "api.twitter.com"
-  :uri "/1/statuses/update.json"
-  :query-params {:include_entities true}
-  :body "status=Hello%20Ladies%20%2b%20Gentlemen%2c%20a%20signed%20OAuth%20request%21"
-  :oauth-consumer-key "xvz1evFS4wEEPTGEFPHBog"
-  :oauth-nonce "kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg"
-  :oauth-signature-method "HMAC-SHA1"
-  :oauth-timestamp "1318622958"
-  :oauth-token "370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb"
-  :oauth-version "1.0"})
+;; (request twitter-request-token)
+
+;; (def request
+;;   (-> ;; http/request
+;;    (fn [request]
+;;      (assoc request :status 200 :body ""))
+;;    (wrap-oauth-authorize-request)
+;;    (wrap-oauth-sign-request "kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw" "LswwdoUaIvS8ltyTt5jkRh4J50vUPVVHtR2YPi5kE")
+;;    (wrap-oauth-default-request)))
+
+;; (request
+;;  {:method :post
+;;   :scheme "https"
+;;   :server-name "api.twitter.com"
+;;   :uri "/1/statuses/update.json"
+;;   :query-params {:include_entities true}
+;;   :body "status=Hello%20Ladies%20%2b%20Gentlemen%2c%20a%20signed%20OAuth%20request%21"
+;;   :oauth-consumer-key "xvz1evFS4wEEPTGEFPHBog"
+;;   :oauth-nonce "kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg"
+;;   :oauth-signature-method "HMAC-SHA1"
+;;   :oauth-timestamp "1318622958"
+;;   :oauth-token "370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb"
+;;   :oauth-version "1.0"})
 
 ;; (request
 ;;  {:method :post
 ;;   :url "http://api.twitter.com/oauth/request_token"
 ;;   :oauth-callback "http://localhost:3005/the_dance/process_callback?service_provider_id=11"
 ;;   :oauth-consumer-key "GDdmIQH6jhtmLUypg82g" })
+
+;; (println
+;;  (oauth-auth-headers
+;;   {:method :post
+;;    :scheme "https"
+;;    :server-name "api.twitter.com"
+;;    :uri "/1/statuses/update.json"
+;;    :query-params {:include_entities true}
+;;    :body "status=Hello%20Ladies%20%2b%20Gentlemen%2c%20a%20signed%20OAuth%20request%21"
+;;    :oauth-consumer-key "xvz1evFS4wEEPTGEFPHBog"
+;;    :oauth-nonce "kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg"
+;;    :oauth-signature-method "HMAC-SHA1"
+;;    :oauth-timestamp "1318622958"
+;;    :oauth-token "370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb"
+;;    :oauth-version "1.0"}))
