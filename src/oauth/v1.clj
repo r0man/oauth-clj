@@ -40,8 +40,8 @@
 (defn oauth-authorization-header
   "Returns the OAuth header of `request`."
   [request]
-  (-> (oauth-map request)
-      (transform-keys (comp name underscore))
+  (-> (merge (oauth-map request)
+             (oauth-map (:query-params request)))
       (format-authorization)))
 
 (defn oauth-signature-parameters
