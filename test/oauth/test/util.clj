@@ -50,6 +50,6 @@
     (is (= expected (oauth-map map)))
     {} {}
     {:oauth-signature-method "HMAC-SHA1" :oauth-version "1.0" :other-key "x"}
-    {:oauth-signature-method "HMAC-SHA1" :oauth-version "1.0"}
-    {"oauth_signature_method" "HMAC-SHA1" :oauth-version "1.0" :q 1}
-    {"oauth_signature_method" "HMAC-SHA1" :oauth-version "1.0"}))
+    {"oauth_signature_method" "HMAC-SHA1" "oauth_version" "1.0"}
+    {:oauth_signature_method "HMAC-SHA1" :oauth-version "1.0" :q 1}
+    {"oauth_signature_method" "HMAC-SHA1" "oauth_version" "1.0"}))

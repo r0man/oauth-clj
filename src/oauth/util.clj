@@ -5,8 +5,8 @@
            javax.crypto.spec.SecretKeySpec)
   (:use [clj-http.util :only (base64-encode url-encode url-decode)]
         [clojure.string :only (join replace split)]
-        [inflections.core :only (hyphenize)]
-        [inflections.transform :only (transform-values)]))
+        [inflections.core :only (hyphenize underscore)]
+        [inflections.transform :only (transform-keys transform-values)]))
 
 (defn compact-map
   "Returns a `map` with all entries removed, where the entrie's value
@@ -74,4 +74,4 @@
 
 (defn oauth-map
   "Returns a map containing only the OAuth entries."
-  [map] (select-keys map (oauth-keys map)))
+  [map] (transform-keys (select-keys map (oauth-keys map)) (comp name underscore)))
