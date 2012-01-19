@@ -110,10 +110,11 @@
 
 (deftest test-wrap-oauth-sign-request
   ((wrap-oauth-sign-request
-    #(is (= "tnnArxj06cWHq44gCs1OSKk/jLY=" (:oauth-signature %1)))
-    oauth-consumer-secret oauth-token-secret)
-   twitter-update-status))
+    #(is (= "tnnArxj06cWHq44gCs1OSKk/jLY=" (:oauth-signature %1))))
+   (assoc twitter-update-status
+     :oauth-consumer-secret oauth-consumer-secret
+     :oauth-token-secret oauth-token-secret)))
 
 (deftest test-make-consumer
-  (let [consumer (make-consumer oauth-consumer-secret oauth-token-secret)]
+  (let [consumer (make-consumer {})]
     (is (fn? consumer))))

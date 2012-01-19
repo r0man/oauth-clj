@@ -102,32 +102,31 @@
          (oauth-authorization-header request))
         (client))))
 
-(defn wrap-oauth-default-request
+(defn wrap-oauth-default-params
   "Returns a HTTP client with OAuth"
-  [client]
+  [client & oauth-params]
   (fn [request]
-    (-> {:oauth-nonce (oauth-nonce)
-         :oauth-signature-method *oauth-signature-method*
-         :oauth-timestamp (str (oauth-timestamp))
-         :oauth-version *oauth-version*}
-        (merge request)
-        (client))))
+    (->> {:oauth-nonce (oauth-nonce)
+          :oauth-signature-method *oauth-signature-method*
+          :oauth-timestamp (str (oauth-timestamp))
+          :oauth-version *oauth-version*}
+         (merge oauth-params request)
+         (client))))
 
 (defn wrap-oauth-sign-request
-  "Returns a HTTP client that signs an OAuth request with
-  `consumer-secret` and `token-secret`."
-  [client consumer-secret token-secret]
-  (fn [request]
-    (let [signature (oauth-request-signature request consumer-secret token-secret)]
+  "Returns a HTTP client that signs an OAuth request."
+  [client]
+  (fn [{:keys [oauth-consumer-secret oauth-token-secret] :as request}]
+    (let [signature (oauth-request-signature request oauth-consumer-secret oauth-token-secret)]
       (client (assoc request :oauth-signature signature)))))
 
 (defn make-consumer
   "Returns an OAuth consumer HTTP client."
-  [consumer-secret token-secret]
+  [oauth-keys]
   (-> http/request
       (wrap-oauth-authorize-request)
-      (wrap-oauth-sign-request consumer-secret token-secret)
-      (wrap-oauth-default-request)))
+      (wrap-oauth-sign-request)
+      (wrap-oauth-default-params oauth-keys)))
 
 ;; (def request (make-consumer "0NKq8e0RoSVR1kOmWcYyg" "1YwAbw0ZmwPjEQsGE6l0tkA9ifjSXJgkVxxrrgiZ0s"))
 
@@ -139,7 +138,7 @@
 ;;      (assoc request :status 200 :body ""))
 ;;    (wrap-oauth-authorize-request)
 ;;    (wrap-oauth-sign-request "kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw" "LswwdoUaIvS8ltyTt5jkRh4J50vUPVVHtR2YPi5kE")
-;;    (wrap-oauth-default-request)))
+;;    (wrap-oauth-default-params)))
 
 ;; (request
 ;;  {:method :post
