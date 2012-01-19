@@ -44,7 +44,7 @@
 (defn percent-encode
   "Percent encode `unencoded` according to RFC 3986, Section 2.1."
   [unencoded]
-  (-> (url-encode unencoded)
+  (-> (url-encode (str unencoded))
       (replace "%7E" "~")
       (replace "*" "%2A")
       (replace "+" "%20")))

@@ -1,7 +1,7 @@
 (ns oauth.test.util
   (:use [clojure.string :only (blank?)]
         clojure.test
-        oauth.test.v1
+        oauth.test.examples
         oauth.util))
 
 (deftest test-compact-map
@@ -29,7 +29,7 @@
   (are [request expected]
     (is (= expected (parse-body-params request)))
     {} nil
-    example-oauth-request {"status" "Hello Ladies + Gentlemen, a signed OAuth request!"}))
+    create-signature-request {"status" "Hello Ladies + Gentlemen, a signed OAuth request!"}))
 
 (deftest test-random-base64
   (is (string? (random-base64 1)))

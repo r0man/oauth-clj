@@ -4,6 +4,7 @@
   (:use [clj-http.util :only (base64-encode url-encode url-decode)]
         [clojure.string :only (join replace split upper-case)]
         [inflections.core :only (underscore)]
+        [inflections.transform :only (transform-keys)]
         oauth.util))
 
 (def ^:dynamic *oauth-consumer-key* nil)
@@ -27,25 +28,19 @@
 (defn format-base-url [request]
   (str (root-url request) (:uri request)))
 
-(defn oauth-parameters
-  "Returns the OAuth parameters from `request`."
+(defn oauth-signature-parameters
+  "Returns the OAuth signature parameters from `request`."
   [request]
-  (let [body (split (:body request) #"=")
-        params  (reduce #(concat %1 [(name (first %2)) (str (last %2))]) nil (:query-params request))]
-    (assoc (apply sorted-map (map url-decode (concat body params)))
-      "oauth_consumer_key" (:oauth-consumer-key request)
-      "oauth_nonce" (:oauth-nonce request)
-      "oauth_signature_method" (:oauth-signature-method request)
-      "oauth_timestamp" (:oauth-timestamp request)
-      "oauth_token" (:oauth-token request)
-      "oauth_version" (:oauth-version request))))
+  (merge (parse-body-params request)
+         (transform-keys (select-oauth-map request) (comp name underscore))
+         (transform-keys (:query-params request) name)))
 
 (defn oauth-parameter-string
   "Returns the OAuth parameter string from `request`."
   [request]
-  (->> (oauth-parameters request)
+  (->> (oauth-signature-parameters request)
        (map #(str (percent-encode (first %1)) "=" (percent-encode (last %1))))
-       (join "&")))
+       (sort) (join "&")))
 
 (defn oauth-signature-base-string
   "Returns the OAuth signature base string from `request`."
@@ -56,17 +51,16 @@
        (join "&")))
 
 (defn oauth-signing-key
-  "Returns the OAuth signing key from `request`. The signing gets
-  constructed from the :oauth-consumer-secret and :oauth-token-secret
-  keys in `request`."
-  [request] (str (:oauth-consumer-secret request) "&" (:oauth-token-secret request)))
+  "Returns the OAuth signing key."
+  [oauth-consumer-secret oauth-token-secret]
+  (str oauth-consumer-secret "&" oauth-token-secret))
 
 (defn oauth-signature
   "Calculates the OAuth signature from `request`."
-  [request]
+  [request & [oauth-consumer-secret oauth-token-secret]]
   (-> (hmac "HmacSHA1"
             (oauth-signature-base-string request)
-            (oauth-signing-key request))
+            (oauth-signing-key oauth-consumer-secret oauth-token-secret))
       (base64-encode)))
 
 (defn oauth-nonce
@@ -76,3 +70,32 @@
 (defn oauth-timestamp
   "Returns the current timestamp for an OAuth request."
   [] (.getTime (java.util.Date.)))
+
+(defn wrap-oauth-request [client]
+  (fn [request]
+    (-> {:oauth-nonce (oauth-nonce)
+         :oauth-signature-method *oauth-signature-method*
+         :oauth-timestamp (str (oauth-timestamp))
+         :oauth-version *oauth-version*}
+        (merge request)
+        (client))))
+
+(defn wrap-oauth-sign-request [client]
+  (fn [request]
+    (client
+     (assoc-in
+      request [:headers "Authorization"]
+      (oauth-signature-base-string request)))))
+
+(def request
+  (-> ;; http/request
+   (fn [request]
+     (assoc request :status 200 :body ""))
+   (wrap-oauth-sign-request)
+   (wrap-oauth-request)))
+
+;; (request
+;;  {:method :post
+;;   :url "http://api.twitter.com/oauth/request_token"
+;;   :oauth-callback "http://localhost:3005/the_dance/process_callback?service_provider_id=11"
+;;   :oauth-consumer-key "GDdmIQH6jhtmLUypg82g" })
