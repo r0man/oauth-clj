@@ -5,7 +5,8 @@
            javax.crypto.spec.SecretKeySpec)
   (:use [clj-http.util :only (base64-encode url-encode url-decode)]
         [clojure.string :only (replace split)]
-        [inflections.core :only (hyphenize)]))
+        [inflections.core :only (hyphenize)]
+        [inflections.transform :only (transform-values)]))
 
 (defn compact-map
   "Returns a `map` with all entries removed, where the entrie's value
@@ -32,6 +33,13 @@
    #(let [[k v] (split %2 #"=")]
       (assoc %1 (hyphenize (keyword k)) v))
    {} (split response #"&")))
+
+(defn parse-body-params
+  "Parse the body of `request` as an URL encoded parameter list."
+  [request]
+  (if (string? (:body request))
+    (-> (apply hash-map (split (:body request) #"="))
+        (transform-values url-decode))))
 
 (defn percent-encode
   "Percent encode `unencoded` according to RFC 3986, Section 2.1."

@@ -1,6 +1,7 @@
 (ns oauth.test.util
   (:use [clojure.string :only (blank?)]
         clojure.test
+        oauth.test.v1
         oauth.util))
 
 (deftest test-compact-map
@@ -22,7 +23,13 @@
     "Ladies + Gentlemen" "Ladies%20%2B%20Gentlemen"
     "An encoded string!" "An%20encoded%20string%21"
     "Dogs, Cats & Mice" "Dogs%2C%20Cats%20%26%20Mice"
-    "☃" "%E2%98%83")) ; https://dev.twitter.com/docs/auth/percent-encoding-parameters
+    "☃" "%E2%98%83"))
+                                        ;
+(deftest test-parse-body-params
+  (are [request expected]
+    (is (= expected (parse-body-params request)))
+    {} nil
+    example-oauth-request {"status" "Hello Ladies + Gentlemen, a signed OAuth request!"}))
 
 (deftest test-random-base64
   (is (string? (random-base64 1)))
