@@ -7,11 +7,26 @@
         [inflections.transform :only (transform-keys)]
         oauth.util))
 
-(def ^:dynamic *oauth-consumer-key* nil)
-
 (def ^:dynamic *oauth-signature-method* "HMAC-SHA1")
 
 (def ^:dynamic *oauth-version* "1.0")
+
+(def oauth-authorization-keys
+  #{:oauth-consumer-key
+    :oauth-nonce
+    :oauth-signature
+    :oauth-signature-method
+    :oauth-timestamp
+    :oauth-token
+    :oauth-version})
+
+(def oauth-signature-keys
+  #{:oauth-consumer-key
+    :oauth-nonce
+    :oauth-signature-method
+    :oauth-timestamp
+    :oauth-token
+    :oauth-version})
 
 (defn format-options [options]
   (map #(format "%s=\"%s\"" (underscore (name (first %1))) (url-encode (last %1))) options))
@@ -32,15 +47,12 @@
   "Returns the OAuth signature parameters from `request`."
   [request]
   (merge (parse-body-params request)
-         (transform-keys (select-oauth-map request) (comp name underscore))
+         (transform-keys (select-keys request oauth-signature-keys) (comp name underscore))
          (transform-keys (:query-params request) name)))
 
 (defn oauth-parameter-string
   "Returns the OAuth parameter string from `request`."
-  [request]
-  (->> (oauth-signature-parameters request)
-       (map #(str (percent-encode (first %1)) "=" (percent-encode (last %1))))
-       (sort) (join "&")))
+  [request] (format-params (oauth-signature-parameters request)))
 
 (defn oauth-signature-base-string
   "Returns the OAuth signature base string from `request`."
@@ -55,7 +67,7 @@
   [oauth-consumer-secret oauth-token-secret]
   (str oauth-consumer-secret "&" oauth-token-secret))
 
-(defn oauth-signature
+(defn oauth-request-signature
   "Calculates the OAuth signature from `request`."
   [request & [oauth-consumer-secret oauth-token-secret]]
   (-> (hmac "HmacSHA1"
@@ -71,9 +83,6 @@
   "Returns the current timestamp for an OAuth request."
   [] (.getTime (java.util.Date.)))
 
-(defn oauth-authorize-request [request]
-  )
-
 (defn wrap-oauth-request [client]
   (fn [request]
     (-> {:oauth-nonce (oauth-nonce)
@@ -83,19 +92,42 @@
         (merge request)
         (client))))
 
-(defn wrap-oauth-sign-request [client]
+(defn wrap-oauth-sign-request
+  "Returns a HTTP client that signs an OAuth request with
+  `consumer-secret` and `token-secret`."
+  [client consumer-secret token-secret]
   (fn [request]
-    (client
-     (assoc-in
-      request [:headers "Authorization"]
-      (oauth-signature-base-string request)))))
+    (let [signature (oauth-request-signature request consumer-secret token-secret)]
+      (client (assoc request :oauth-signature signature)))))
 
 (def request
   (-> ;; http/request
    (fn [request]
      (assoc request :status 200 :body ""))
-   (wrap-oauth-sign-request)
+   (wrap-oauth-sign-request "xvz1evFS4wEEPTGEFPHBog" "370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb")
    (wrap-oauth-request)))
+
+(def request
+  (-> ;; http/request
+   (fn [request]
+     (assoc request :status 200 :body ""))
+   (wrap-oauth-sign-request "kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw" "LswwdoUaIvS8ltyTt5jkRh4J50vUPVVHtR2YPi5kE")
+   ;; (wrap-oauth-request)
+   ))
+
+(request
+ {:method :post
+  :scheme "https"
+  :server-name "api.twitter.com"
+  :uri "/1/statuses/update.json"
+  :query-params {:include_entities true}
+  :body "status=Hello%20Ladies%20%2b%20Gentlemen%2c%20a%20signed%20OAuth%20request%21"
+  :oauth-consumer-key "xvz1evFS4wEEPTGEFPHBog"
+  :oauth-nonce "kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg"
+  :oauth-signature-method "HMAC-SHA1"
+  :oauth-timestamp "1318622958"
+  :oauth-token "370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb"
+  :oauth-version "1.0"})
 
 ;; (request
 ;;  {:method :post

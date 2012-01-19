@@ -71,9 +71,9 @@
     (is (= "1.0" (get params "oauth_version")))
     (is (= "Hello Ladies + Gentlemen, a signed OAuth request!" (get params "status")))))
 
-(deftest test-oauth-signature
+(deftest test-oauth-request-signature
   (is (= "tnnArxj06cWHq44gCs1OSKk/jLY="
-         (oauth-signature create-signature-request oauth-consumer-secret oauth-token-secret))))
+         (oauth-request-signature create-signature-request oauth-consumer-secret oauth-token-secret))))
 
 (deftest test-oauth-signature-base-string
   (is (= (str "POST&"
@@ -97,3 +97,9 @@
 
 (deftest test-oauth-timestamp
   (is (number? (oauth-timestamp))))
+
+(deftest test-wrap-oauth-sign-request
+  ((wrap-oauth-sign-request
+    #(is (= "tnnArxj06cWHq44gCs1OSKk/jLY=" (:oauth-signature %1)))
+    oauth-consumer-secret oauth-token-secret)
+   create-signature-request))

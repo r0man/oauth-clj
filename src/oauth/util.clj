@@ -4,7 +4,7 @@
            javax.crypto.Mac
            javax.crypto.spec.SecretKeySpec)
   (:use [clj-http.util :only (base64-encode url-encode url-decode)]
-        [clojure.string :only (replace split)]
+        [clojure.string :only (join replace split)]
         [inflections.core :only (hyphenize)]
         [inflections.transform :only (transform-values)]))
 
@@ -48,6 +48,13 @@
       (replace "%7E" "~")
       (replace "*" "%2A")
       (replace "+" "%20")))
+
+(defn format-params
+  "Returns OAuth formatted OAuth params."
+  [params]
+  (->> (seq params)
+       (map #(str (percent-encode (first %1)) "=" (percent-encode (last %1))))
+       (sort) (join "&")))
 
 (defn random-bytes
   "Returns a random byte array of the specified size."
