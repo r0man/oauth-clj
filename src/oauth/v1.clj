@@ -106,7 +106,7 @@
 
 (defn oauth-sign-request
   "Sign the OAuth request with `key` and `secret`."
-  [request key secret]
+  [request key & [secret]]
   (assoc request :oauth-signature (oauth-request-signature request key secret)))
 
 (defn wrap-oauth-sign-request
