@@ -89,8 +89,11 @@
          (oauth-signature-base-string create-signature-request))))
 
 (deftest test-oauth-signing-key
-  (is (= "kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw&LswwdoUaIvS8ltyTt5jkRh4J50vUPVVHtR2YPi5kE"
-         (oauth-signing-key oauth-consumer-secret oauth-token-secret))))
+  (are [consumer-secret token-secret expected]
+    (is (= expected (oauth-signing-key consumer-secret token-secret)))
+    "MCD8BKwGdgPHvAuvgvz4EQpqDAtx89grbuNMRd7Eh98" nil "MCD8BKwGdgPHvAuvgvz4EQpqDAtx89grbuNMRd7Eh98&"
+    "MCD8BKwGdgPHvAuvgvz4EQpqDAtx89grbuNMRd7Eh98" "" "MCD8BKwGdgPHvAuvgvz4EQpqDAtx89grbuNMRd7Eh98&"
+    oauth-consumer-secret oauth-token-secret "kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw&LswwdoUaIvS8ltyTt5jkRh4J50vUPVVHtR2YPi5kE"))
 
 (deftest test-oauth-timestamp
   (is (number? (oauth-timestamp))))
