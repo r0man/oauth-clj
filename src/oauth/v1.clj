@@ -104,12 +104,16 @@
          (merge params request)
          (client))))
 
+(defn oauth-sign-request
+  "Sign the OAuth request with `key` and `secret`."
+  [request key secret]
+  (assoc request :oauth-signature (oauth-request-signature request key secret)))
+
 (defn wrap-oauth-sign-request
   "Returns a HTTP client that signs an OAuth request."
   [client]
   (fn [{:keys [oauth-consumer-secret oauth-token-secret] :as request}]
-    (let [signature (oauth-request-signature request oauth-consumer-secret oauth-token-secret)]
-      (client (assoc request :oauth-signature signature)))))
+    (client (oauth-sign-request request oauth-consumer-secret oauth-token-secret))))
 
 (defn make-consumer
   "Returns an OAuth consumer HTTP client."
