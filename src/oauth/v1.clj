@@ -69,10 +69,10 @@
 
 (defn oauth-request-signature
   "Calculates the OAuth signature from `request`."
-  [request & [oauth-consumer-secret oauth-token-secret]]
+  [request & [consumer-secret token-secret]]
   (-> (hmac "HmacSHA1"
             (oauth-signature-base-string request)
-            (oauth-signing-key oauth-consumer-secret oauth-token-secret))
+            (oauth-signing-key consumer-secret token-secret))
       (base64-encode)))
 
 (defn oauth-nonce
@@ -82,6 +82,16 @@
 (defn oauth-timestamp
   "Returns the current timestamp for an OAuth request."
   [] (.getTime (java.util.Date.)))
+
+(defn oauth-sign-request
+  "Sign the OAuth request with `key` and `secret`."
+  [request consumer-secret & [token-secret]]
+  (assoc request
+    :oauth-signature
+    (oauth-request-signature
+     request
+     (or consumer-secret (:oauth-consumer-secret request))
+     (or token-secret (:oauth-token-secret request)))))
 
 (defn wrap-oauth-authorize-request
   "Returns a HTTP client that adds the OAuth authorization header to
@@ -104,16 +114,11 @@
          (merge params request)
          (client))))
 
-(defn oauth-sign-request
-  "Sign the OAuth request with `key` and `secret`."
-  [request key & [secret]]
-  (assoc request :oauth-signature (oauth-request-signature request key secret)))
-
 (defn wrap-oauth-sign-request
   "Returns a HTTP client that signs an OAuth request."
-  [client]
-  (fn [{:keys [oauth-consumer-secret oauth-token-secret] :as request}]
-    (client (oauth-sign-request request oauth-consumer-secret oauth-token-secret))))
+  [client & [consumer-secret token-secret]]
+  (fn [request]
+    (client (oauth-sign-request request consumer-secret token-secret))))
 
 (defn make-consumer
   "Returns an OAuth consumer HTTP client."
@@ -123,7 +128,7 @@
       (wrap-oauth-sign-request)
       (wrap-oauth-default-params oauth-keys)))
 
-;; (def request (make-consumer "0NKq8e0RoSVR1kOmWcYyg" "1YwAbw0ZmwPjEQsGE6l0tkA9ifjSXJgkVxxrrgiZ0s"))
+;; (def request (make-consumer {:oauth-consumer-secret "0NKq8e0RoSVR1kOmWcYyg"}))
 
 ;; (request twitter-request-token)
 
