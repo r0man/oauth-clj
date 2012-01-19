@@ -71,6 +71,9 @@
   "Returns the current timestamp for an OAuth request."
   [] (.getTime (java.util.Date.)))
 
+(defn oauth-authorize-request [request]
+  )
+
 (defn wrap-oauth-request [client]
   (fn [request]
     (-> {:oauth-nonce (oauth-nonce)

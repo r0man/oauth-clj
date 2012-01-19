@@ -13,18 +13,10 @@
    :oauth-token "370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb"
    :oauth-version "1.0"})
 
-(def example-request
-  {:method :post
-   :scheme "https"
-   :server-name "api.twitter.com"
-   :uri "/1/statuses/update.json"
-   :query-params {:include_entities true}
-   :body "status=Hello%20Ladies%20%2b%20Gentlemen%2c%20a%20signed%20OAuth%20request%21"})
-
 (deftest test-format-base-url
   (are [request expected]
     (is (= expected (format-base-url request)))
-    example-request "https://api.twitter.com/1/statuses/update.json"))
+    create-signature-request "https://api.twitter.com/1/statuses/update.json"))
 
 (deftest test-format-header
   (= (str "OAuth" (format-options example-options)) (format-header example-options)))
@@ -46,7 +38,9 @@
      (format-options example-options)))
 
 (deftest test-root-url
-  (is (= "https://api.twitter.com" (root-url example-request))))
+  (are [request expected]
+    (is (= expected (root-url request)))
+    create-signature-request "https://api.twitter.com"))
 
 (deftest test-oauth-nonce
   (is (string? (oauth-nonce)))
