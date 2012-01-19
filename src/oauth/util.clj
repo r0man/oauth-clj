@@ -68,10 +68,10 @@
   specified size."
   [size] (base64-encode (random-bytes size)))
 
-(defn select-oauth-keys
+(defn oauth-keys
   "Returns the OAuth keys in `map`."
-  [map] (filter #(.startsWith (name %1) "oauth-") (keys map)))
+  [map] (filter #(re-matches #"^oauth(-|_).*" (name %1)) (keys map)))
 
-(defn select-oauth-map
+(defn oauth-map
   "Returns a map containing only the OAuth entries."
-  [map] (select-keys map (select-oauth-keys map)))
+  [map] (select-keys map (oauth-keys map)))
