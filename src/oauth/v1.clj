@@ -104,13 +104,13 @@
 
 (defn wrap-oauth-default-params
   "Returns a HTTP client with OAuth"
-  [client & oauth-params]
+  [client & params]
   (fn [request]
     (->> {:oauth-nonce (oauth-nonce)
           :oauth-signature-method *oauth-signature-method*
           :oauth-timestamp (str (oauth-timestamp))
           :oauth-version *oauth-version*}
-         (merge oauth-params request)
+         (merge params request)
          (client))))
 
 (defn wrap-oauth-sign-request
