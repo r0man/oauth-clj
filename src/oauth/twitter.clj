@@ -15,10 +15,17 @@
   "Sends the user to Twitter's authorization endpoint."
   [oauth-token] (v1/oauth-authorize *oauth-authorization-url* oauth-token))
 
+(defn oauth-access-token
+  "Obtain a OAuth access token from Twitter."
+  [oauth-consumer-key oauth-token oauth-verifier]
+  (v1/oauth-access-token *oauth-access-token-url* oauth-consumer-key oauth-token oauth-verifier))
+
+(defn oauth-client
+  "Returns a OAuth Twitter client."
+  [oauth-consumer-key oauth-consumer-secret oauth-token oauth-token-secret]
+  (v1/oauth-client oauth-consumer-key oauth-consumer-secret oauth-token oauth-token-secret))
+
 (defn oauth-request-token
   "Obtain a OAuth request token from Twitter to request user authorization."
-  [consumer-key consumer-secret]
-  (v1/oauth-request-token *oauth-request-token-url* consumer-key consumer-secret))
-
-;; (let [response (oauth-request-token "qcz2O57srPsb5eZA2Jyw" "lfs5WjmIzPc3OlDNoHSfbxVBmPNmduTDq4rQHhNN7Q")]
-;;   (prn response))
+  [oauth-consumer-key oauth-consumer-secret]
+  (v1/oauth-request-token *oauth-request-token-url* oauth-consumer-key oauth-consumer-secret))

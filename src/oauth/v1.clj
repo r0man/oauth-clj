@@ -116,11 +116,30 @@
       (wrap-oauth-default-params oauth-params)
       (http/wrap-request)))
 
-(defn oauth-request-token
-  "Obtain a OAuth request token to request user authorization."
-  [url consumer-key consumer-secret]
+(defn oauth-access-token
+  "Obtain the OAuth access token."
+  [url oauth-consumer-key oauth-token oauth-verifier]
   (-> ((make-consumer
-        {:oauth-consumer-key consumer-key
-         :oauth-consumer-secret consumer-secret})
+        {:oauth-consumer-key oauth-consumer-key
+         :oauth-token oauth-token
+         :oauth-verifier oauth-verifier})
        {:method :post :url url})
       :body parse-body))
+
+(defn oauth-request-token
+  "Obtain the OAuth request token to request user authorization."
+  [url oauth-consumer-key oauth-consumer-secret]
+  (-> ((make-consumer
+        {:oauth-consumer-key oauth-consumer-key
+         :oauth-consumer-secret oauth-consumer-secret})
+       {:method :post :url url})
+      :body parse-body))
+
+(defn oauth-client
+  "Returns the OAuth HTTP client."
+  [oauth-consumer-key oauth-consumer-secret oauth-token oauth-token-secret]
+  (make-consumer
+   {:oauth-consumer-key oauth-consumer-key
+    :oauth-consumer-secret oauth-consumer-secret
+    :oauth-token oauth-token
+    :oauth-token-secret oauth-token-secret}))
