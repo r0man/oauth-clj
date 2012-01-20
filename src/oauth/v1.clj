@@ -40,7 +40,7 @@
 (defn oauth-authorization-header
   "Returns the OAuth header of `request`."
   [request]
-  (-> (merge (oauth-map request)
+  (-> (merge (oauth-map (dissoc request :oauth-consumer-secret :oauth-token-secret))
              (oauth-map (:query-params request)))
       (format-authorization)))
 
@@ -130,11 +130,6 @@
       (wrap-oauth-sign-request)
       (wrap-oauth-default-params oauth-keys)
       (http/wrap-request)))
-
-;; (request
-;;  {:method :post
-;;   :url "https://api.twitter.com/oauth/request_token"
-;;   :oauth-callback "http://localhost:3005/the_dance/process_callback?service_provider_id=11"})
 
 ;; (request
 ;;  {:method :post
