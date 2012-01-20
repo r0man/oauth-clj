@@ -70,7 +70,7 @@
   [] (int (/ (.getTime (java.util.Date.)) 1000)))
 
 (defn oauth-sign-request
-  "Sign the OAuth request with `key` and `secret`."
+  "Sign the OAuth request with `consumer-key` and `token-secret`."
   [request consumer-secret & [token-secret]]
   (let [signature (oauth-request-signature request consumer-secret token-secret)]
     (assoc request :oauth-signature signature)))
@@ -80,7 +80,6 @@
   request."
   [client]
   (fn [request]
-    (clojure.pprint/pprint request)
     (-> (assoc-in
          request [:headers "Authorization"]
          (oauth-authorization-header request))
