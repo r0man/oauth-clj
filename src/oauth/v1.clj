@@ -82,7 +82,7 @@
 
 (defn oauth-timestamp
   "Returns the current timestamp for an OAuth request."
-  [] (.getTime (java.util.Date.)))
+  [] (int (/ (.getTime (java.util.Date.)) 1000)))
 
 (defn oauth-sign-request
   "Sign the OAuth request with `key` and `secret`."
@@ -130,17 +130,3 @@
       (wrap-oauth-sign-request)
       (wrap-oauth-default-params oauth-keys)
       (http/wrap-request)))
-
-;; (request
-;;  {:method :post
-;;   :scheme "https"
-;;   :server-name "api.twitter.com"
-;;   :uri "/1/statuses/update.json"
-;;   :query-params {:include_entities true}
-;;   :body "status=Hello%20Ladies%20%2b%20Gentlemen%2c%20a%20signed%20OAuth%20request%21"
-;;   :oauth-consumer-key "xvz1evFS4wEEPTGEFPHBog"
-;;   :oauth-nonce "kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg"
-;;   :oauth-signature-method "HMAC-SHA1"
-;;   :oauth-timestamp "1318622958"
-;;   :oauth-token "370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb"
-;;   :oauth-version "1.0"})

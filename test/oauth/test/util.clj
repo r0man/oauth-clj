@@ -12,7 +12,7 @@
 
 (deftest test-parse-respone
   (are [response expected]
-    (is (= expected (parse-response response)))
+    (is (= expected (parse-body response)))
     "oauth_token=Z6eEdO8MOmk394WozF5oKyuAv855l4Mlqo7hhlSLik&oauth_callback_confirmed=true"
     {:oauth-callback-confirmed "true" :oauth-token "Z6eEdO8MOmk394WozF5oKyuAv855l4Mlqo7hhlSLik"}))
 

@@ -26,13 +26,13 @@
                  (.init key))]
        (.doFinal mac (.getBytes msg encoding)))))
 
-(defn parse-response
-  "Parse `response` and return a map with hypenized keys and their values."
-  [response]
+(defn parse-body
+  "Parse `body` and return a map with hypenized keys and their values."
+  [body]
   (reduce
    #(let [[k v] (split %2 #"=")]
       (assoc %1 (hyphenize (keyword k)) v))
-   {} (split response #"&")))
+   {} (split body #"&")))
 
 (defn parse-body-params
   "Parse the body of `request` as an URL encoded parameter list."
