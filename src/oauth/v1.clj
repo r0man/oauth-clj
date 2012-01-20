@@ -60,11 +60,13 @@
       (base64-encode)))
 
 (defn oauth-nonce
-  "Returns the OAuth nonce."
+  "Returns a random OAuth nonce. The OAuth nonce is a unique token an
+  application should generate for each unique request."
   [] (replace (random-base64 32) #"(?i)[^a-z0-9]" ""))
 
 (defn oauth-timestamp
-  "Returns the current timestamp for an OAuth request."
+  "Returns the current OAuth timestamp. The current time in seconds
+  since the Unix epoch."
   [] (int (/ (.getTime (java.util.Date.)) 1000)))
 
 (defn oauth-sign-request
