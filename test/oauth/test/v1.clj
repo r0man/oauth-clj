@@ -1,6 +1,7 @@
 (ns oauth.test.v1
   (:require [clj-http.client :as http])
-  (:use clojure.test
+  (:use [clojure.java.browse :only (browse-url)]
+        clojure.test
         oauth.test.examples
         oauth.v1))
 
@@ -22,6 +23,11 @@
               "oauth_version=\"1.0\"")
          (oauth-authorization-header
           (oauth-sign-request twitter-request-token "MCD8BKwGdgPHvAuvgvz4EQpqDAtx89grbuNMRd7Eh98" nil)))))
+
+(deftest test-oauth-authorize
+  (let [expected "https://api.twitter.com/oauth/authorize?oauth_token=9BVHFCl8PCvGekptmdtL1169QkppJG6PgpUDQDWow"]
+    (with-redefs [browse-url (fn [url] (is (= expected url)))]
+      (oauth-authorize "https://api.twitter.com/oauth/authorize" "9BVHFCl8PCvGekptmdtL1169QkppJG6PgpUDQDWow"))))
 
 (deftest test-oauth-nonce
   (is (string? (oauth-nonce)))

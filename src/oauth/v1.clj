@@ -2,6 +2,7 @@
   (:refer-clojure :exclude (replace))
   (:require [clj-http.client :as http])
   (:use [clj-http.util :only (base64-encode)]
+        [clojure.java.browse :only (browse-url)]
         [clojure.string :only (join replace)]
         [inflections.transform :only (transform-keys)]
         oauth.util))
@@ -24,6 +25,10 @@
   (-> (merge (oauth-params (dissoc request :oauth-consumer-secret :oauth-token-secret))
              (oauth-params (:query-params request)))
       (format-authorization)))
+
+(defn oauth-authorize
+  "Send the user to the authorization url via `browse-url`."
+  [url oauth-token] (browse-url (format "%s?oauth_token=%s" url oauth-token)))
 
 (defn oauth-signature-parameters
   "Returns the OAuth signature parameters from `request`."
@@ -104,9 +109,18 @@
 
 (defn make-consumer
   "Returns an OAuth consumer HTTP client."
-  [oauth-keys]
+  [oauth-params]
   (-> clj-http.core/request
       (wrap-oauth-authorize-request)
       (wrap-oauth-sign-request)
-      (wrap-oauth-default-params oauth-keys)
+      (wrap-oauth-default-params oauth-params)
       (http/wrap-request)))
+
+(defn oauth-request-token
+  "Obtain a OAuth request token to request user authorization."
+  [url consumer-key consumer-secret]
+  (-> ((make-consumer
+        {:oauth-consumer-key consumer-key
+         :oauth-consumer-secret consumer-secret})
+       {:method :post :url url})
+      :body parse-body))
