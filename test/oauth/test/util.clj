@@ -4,6 +4,11 @@
         oauth.test.examples
         oauth.util))
 
+(deftest test-byte-array?
+  (is (not (byte-array? nil)))
+  (is (not (byte-array? "")))
+  (is (byte-array? (.getBytes "123"))))
+
 (deftest test-compact-map
   (is (= {} (compact-map {})))
   (is (= {:a "1"} (compact-map {:a "1"})))

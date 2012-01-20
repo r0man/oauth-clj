@@ -8,6 +8,10 @@
         [inflections.core :only (hyphenize underscore)]
         [inflections.transform :only (transform-keys transform-values)]))
 
+(defn byte-array?
+  "Returns true if `arg` is a byte array, otherwise false."
+  [arg] (instance? (Class/forName "[B") arg))
+
 (defn compact-map
   "Returns a `map` with all entries removed, where the entrie's value
   matches `pred`."
