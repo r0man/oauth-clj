@@ -54,7 +54,9 @@
   [request & [consumer-secret token-secret]]
   (-> (hmac "HmacSHA1"
             (oauth-signature-base-string request)
-            (oauth-signing-key consumer-secret token-secret))
+            (oauth-signing-key
+             (or consumer-secret (:oauth-consumer-secret request))
+             (or token-secret (:oauth-token-secret request))))
       (base64-encode)))
 
 (defn oauth-nonce
@@ -68,12 +70,8 @@
 (defn oauth-sign-request
   "Sign the OAuth request with `key` and `secret`."
   [request consumer-secret & [token-secret]]
-  (assoc request
-    :oauth-signature
-    (oauth-request-signature
-     request
-     (or consumer-secret (:oauth-consumer-secret request))
-     (or token-secret (:oauth-token-secret request)))))
+  (let [signature (oauth-request-signature request consumer-secret token-secret)]
+    (assoc request :oauth-signature signature)))
 
 (defn wrap-oauth-authorize-request
   "Returns a HTTP client that adds the OAuth authorization header to
