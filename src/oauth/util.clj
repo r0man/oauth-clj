@@ -14,7 +14,7 @@
   [map & [pred]]
   (let [pred (or pred nil?)]
     (reduce
-     #(if (pred (%2 map)) %1 (assoc %1 %2 (%2 map)))
+     #(if (pred (get map %2)) %1 (assoc %1 %2 (get map %2)))
      {} (keys map))))
 
 (defn hmac
