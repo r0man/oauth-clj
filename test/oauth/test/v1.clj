@@ -58,7 +58,7 @@
   (is (= "8wUi7m5HFQy76nowoCThusfgB+Q="
          (oauth-request-signature twitter-request-token "MCD8BKwGdgPHvAuvgvz4EQpqDAtx89grbuNMRd7Eh98" nil))))
 
-(deftest test-oauth-signature-base-string
+(deftest test-oauth-signature-base
   (is (= (str "POST&"
               "https%3A%2F%2Fapi.twitter.com%2F1%2Fstatuses%2Fupdate.json&"
               "include_entities%3Dtrue%26"
@@ -69,7 +69,7 @@
               "oauth_token%3D370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb%26"
               "oauth_version%3D1.0%26"
               "status%3DHello%2520Ladies%2520%252B%2520Gentlemen%252C%2520a%2520signed%2520OAuth%2520request%2521")
-         (oauth-signature-base-string twitter-update-status)))
+         (oauth-signature-base twitter-update-status)))
   (is (= (str "POST&"
               "https%3A%2F%2Fapi.twitter.com%2Foauth%2Frequest_token&"
               "oauth_callback%3Dhttp%253A%252F%252Flocalhost%253A3005%252Fthe_dance%252Fprocess_callback%253Fservice_provider_id%253D11%26"
@@ -78,7 +78,7 @@
               "oauth_signature_method%3DHMAC-SHA1%26"
               "oauth_timestamp%3D1272323042%26"
               "oauth_version%3D1.0")
-         (oauth-signature-base-string twitter-request-token))))
+         (oauth-signature-base twitter-request-token))))
 
 (deftest test-oauth-signing-key
   (are [consumer-secret token-secret expected]

@@ -37,7 +37,7 @@
   "Returns the OAuth parameter string from `request`."
   [request] (format-params (oauth-signature-parameters request)))
 
-(defn oauth-signature-base-string
+(defn oauth-signature-base
   "Returns the OAuth signature base string from `request`."
   [request]
   (->> [(format-http-method request)
@@ -53,7 +53,7 @@
   "Calculates the OAuth signature from `request`."
   [request & [consumer-secret token-secret]]
   (-> (hmac "HmacSHA1"
-            (oauth-signature-base-string request)
+            (oauth-signature-base request)
             (oauth-signing-key
              (or consumer-secret (:oauth-consumer-secret request))
              (or token-secret (:oauth-token-secret request))))
