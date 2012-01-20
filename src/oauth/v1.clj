@@ -21,15 +21,15 @@
 (defn oauth-authorization-header
   "Returns the OAuth header of `request`."
   [request]
-  (-> (merge (oauth-map (dissoc request :oauth-consumer-secret :oauth-token-secret))
-             (oauth-map (:query-params request)))
+  (-> (merge (oauth-params (dissoc request :oauth-consumer-secret :oauth-token-secret))
+             (oauth-params (:query-params request)))
       (format-authorization)))
 
 (defn oauth-signature-parameters
   "Returns the OAuth signature parameters from `request`."
   [request]
   (-> (merge (parse-body-params request)
-             (oauth-map (dissoc request :oauth-consumer-secret :oauth-token-secret))
+             (oauth-params (dissoc request :oauth-consumer-secret :oauth-token-secret))
              (transform-keys (:query-params request) name))
       (compact-map)))
 

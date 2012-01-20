@@ -90,6 +90,6 @@
   "Returns the OAuth keys in `map`."
   [map] (filter #(re-matches #"^oauth(-|_).*" (name %1)) (keys map)))
 
-(defn oauth-map
+(defn oauth-params
   "Returns a map containing only the OAuth entries."
   [map] (transform-keys (select-keys map (oauth-keys map)) (comp name underscore)))

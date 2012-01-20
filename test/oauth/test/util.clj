@@ -74,9 +74,9 @@
     {:oauth-signature-method "HMAC-SHA1" "oauth_version" "1.0" :other-key "x"}
     [:oauth-signature-method "oauth_version"]))
 
-(deftest test-oauth-map
+(deftest test-oauth-params
   (are [map expected]
-    (is (= expected (oauth-map map)))
+    (is (= expected (oauth-params map)))
     {} {}
     {:oauth-signature-method "HMAC-SHA1" :oauth-version "1.0" :other-key "x"}
     {"oauth_signature_method" "HMAC-SHA1" "oauth_version" "1.0"}
