@@ -59,9 +59,10 @@
 (defn parse-body-params
   "Parse the body of `request` as an URL encoded parameter list."
   [request]
-  (if (string? (:body request))
-    (-> (apply hash-map (split (:body request) #"="))
-        (transform-values url-decode))))
+  (if-let [body (:body request)]
+    (let [body (if (byte-array? body) (String. body) (str body))]
+      (-> (apply hash-map (split body #"="))
+          (transform-values url-decode)))))
 
 (defn percent-encode
   "Percent encode `unencoded` according to RFC 3986, Section 2.1."
