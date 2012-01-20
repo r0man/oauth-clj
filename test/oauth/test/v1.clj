@@ -4,35 +4,6 @@
         oauth.test.examples
         oauth.v1))
 
-(deftest test-format-base-url
-  (are [request expected]
-    (is (= expected (format-base-url request)))
-    twitter-update-status "https://api.twitter.com/1/statuses/update.json"))
-
-(deftest test-format-authorization
-  (= (str "OAuth" (format-options twitter-update-status)) (format-authorization twitter-update-status)))
-
-(deftest test-format-http-method
-  (are [request expected]
-    (is (= expected (format-http-method request)))
-    {:method :get} "GET"
-    {:request-method :get} "GET"))
-
-(deftest test-format-options
-  (= (str "oauth_token=\"370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb\", "
-          "oauth_signature_method=\"HMAC-SHA1\", "
-          "oauth_timestamp=\"1318622958\", "
-          "oauth_signature=\"tnnArxj06cWHq44gCs1OSKk%2FjLY%3D\", "
-          "oauth_nonce=\"kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg\", "
-          "oauth_version=\"1.0\", "
-          "oauth_consumer_key=\"xvz1evFS4wEEPTGEFPHBog\"")
-     (format-options twitter-update-status)))
-
-(deftest test-root-url
-  (are [request expected]
-    (is (= expected (root-url request)))
-    twitter-update-status "https://api.twitter.com"))
-
 (deftest test-oauth-authorization-header
   (is (= (str "OAuth "
               "oauth_consumer_key=\"xvz1evFS4wEEPTGEFPHBog\", "

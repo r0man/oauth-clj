@@ -4,7 +4,7 @@
            javax.crypto.Mac
            javax.crypto.spec.SecretKeySpec)
   (:use [clj-http.util :only (base64-encode url-encode url-decode)]
-        [clojure.string :only (join replace split)]
+        [clojure.string :only (join replace split upper-case)]
         [inflections.core :only (hyphenize underscore)]
         [inflections.transform :only (transform-keys transform-values)]))
 
@@ -16,6 +16,24 @@
     (reduce
      #(if (pred (get map %2)) %1 (assoc %1 %2 (get map %2)))
      {} (keys map))))
+
+(defn format-option [[k v]]
+  (format "%s=\"%s\"" (underscore (name k)) (url-encode (str v))))
+
+(defn format-options [options]
+  (map format-option (sort options)))
+
+(defn format-authorization [options]
+  (str "OAuth "(join ", " (format-options options))))
+
+(defn root-url [{:keys [scheme server-name server-port]}]
+  (str scheme "://" server-name (when server-port (str ":" server-port))))
+
+(defn format-http-method [request]
+  (upper-case (name (or (:method request) (:request-method request)))))
+
+(defn format-base-url [request]
+  (str (root-url request) (:uri request)))
 
 (defn hmac
   ([^String algorithm ^String msg ^String key]

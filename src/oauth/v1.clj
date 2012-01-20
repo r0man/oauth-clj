@@ -1,9 +1,8 @@
 (ns oauth.v1
   (:refer-clojure :exclude (replace))
   (:require [clj-http.client :as http])
-  (:use [clj-http.util :only (base64-encode url-encode url-decode)]
-        [clojure.string :only (join replace split upper-case)]
-        [inflections.core :only (underscore)]
+  (:use [clj-http.util :only (base64-encode)]
+        [clojure.string :only (join replace)]
         [inflections.transform :only (transform-keys)]
         oauth.util))
 
@@ -18,24 +17,6 @@
     :oauth-timestamp
     :oauth-token
     :oauth-version})
-
-(defn format-option [[k v]]
-  (format "%s=\"%s\"" (underscore (name k)) (url-encode (str v))))
-
-(defn format-options [options]
-  (map format-option (sort options)))
-
-(defn format-authorization [options]
-  (str "OAuth "(join ", " (format-options options))))
-
-(defn root-url [{:keys [scheme server-name server-port]}]
-  (str scheme "://" server-name (when server-port (str ":" server-port))))
-
-(defn format-http-method [request]
-  (upper-case (name (or (:method request) (:request-method request)))))
-
-(defn format-base-url [request]
-  (str (root-url request) (:uri request)))
 
 (defn oauth-authorization-header
   "Returns the OAuth header of `request`."
