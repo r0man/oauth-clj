@@ -78,7 +78,7 @@
 
 (defn oauth-nonce
   "Returns the OAuth nonce."
-  [] (random-base64 32))
+  [] (replace (random-base64 32) #"(?i)[^a-z0-9]" ""))
 
 (defn oauth-timestamp
   "Returns the current timestamp for an OAuth request."
