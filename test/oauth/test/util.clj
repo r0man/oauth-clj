@@ -23,6 +23,15 @@
 (deftest test-format-authorization
   (= (str "OAuth" (format-options twitter-update-status)) (format-authorization twitter-update-status)))
 
+(deftest test-format-query-params
+  (are [params expected]
+    (is (= expected (format-query-params params)))
+    nil nil
+    {} nil
+    {:client-id "287169314674516"} "client_id=287169314674516"
+    {"client_id" "287169314674516"} "client_id=287169314674516"
+    {"client-id" "287169314674516"} "client-id=287169314674516"))
+
 (deftest test-format-http-method
   (are [request expected]
     (is (= expected (format-http-method request)))

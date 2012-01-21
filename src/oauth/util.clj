@@ -1,4 +1,5 @@
 (ns oauth.util
+  (:require [clj-http.client :as http])
   (:refer-clojure :exclude (replace))
   (:import java.security.SecureRandom
            javax.crypto.Mac
@@ -29,6 +30,12 @@
 
 (defn format-authorization [options]
   (str "OAuth "(join ", " (format-options options))))
+
+(defn format-query-params [params]
+  (let [params (compact-map params)]
+    (if-not (empty? params)
+      (-> (transform-keys params #(if (string? %1) %1 (-> %1 name underscore)))
+          (http/generate-query-string)))))
 
 (defn root-url [{:keys [scheme server-name server-port]}]
   (str scheme "://" server-name (when server-port (str ":" server-port))))
