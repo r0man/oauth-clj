@@ -42,24 +42,3 @@
   (-> clj-http.core/request
       (http/wrap-request)
       (wrap-oauth-access-token access-token)))
-
-;; (oauth-authorize
-;;  "https://www.facebook.com/dialog/oauth"
-;;  "287169314674516"
-;;  "http://localhost/oauth/facebook/callback"
-;;  :scope "offline_access")
-
-;; (def access-token
-;;   (oauth-access-token
-;;    "https://graph.facebook.com/oauth/access_token"
-;;    "287169314674516"
-;;    "a91bac323651f4f1633d0a6913529878"
-;;    "AQDkFVB9TRIhhcZPfFkQ-cil4LEQrfjxotOBDA8Vd8aNUVDcLp9-D9aT-HJFIT3CbDi1BpXkynurKEynYB-ERz_QImN8vhAkR1Sz5kfLy9vfbMi_-eaJA_SfCBDw4cuq-GkmYg6GjyyAtJDhplVSTd6u-Fy7WlNv8i95qODKfo5C5XMXOIkhcu0yAJ4KtRZfCVI#_=_"
-;;    "http://localhost/oauth/facebook/callback"))
-
-;; (prn access-token)
-
-;; (prn access-token)
-;; (println
-;;  ((make-consumer (:access-token access-token))
-;;   {:method :get :url "https://graph.facebook.com/me"}))
