@@ -25,6 +25,4 @@
 
 (defn oauth-client
   "Returns a Facebook OAuth client."
-  [access-token]
-  (wrap-decode-response
-   (v2/make-consumer access-token)))
+  [access-token] (v2/make-consumer access-token))

@@ -41,4 +41,5 @@
   [access-token]
   (-> clj-http.core/request
       (http/wrap-request)
-      (wrap-oauth-access-token access-token)))
+      (wrap-oauth-access-token access-token)
+      (wrap-decode-response)))
