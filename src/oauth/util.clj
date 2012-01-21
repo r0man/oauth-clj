@@ -30,14 +30,17 @@
 
 (defn decode-body
   "Returns the :body key of `request`. If body is an instance of
-  clojure.lang.IMeta, the other request keys will be attached as meta
+  clojure.lang.IMeta, the rest of response will be attached as meta
   data."
   [{:keys [body] :as response}]
   (if (instance? clojure.lang.IMeta body)
     (with-meta body (dissoc response :body))
     body))
 
-(defn decode-json [response]
+(defn decode-json
+  "Docode the body of `response` via `read-json` and attach the rest
+  of the response as meta data."
+  [response]
   (if (string? (:body response))
     (-> (decode-body (assoc response :body (read-json (:body response))))
         (transform-keys hyphenize))
