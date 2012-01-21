@@ -80,15 +80,15 @@
   (let [signature (oauth-request-signature request consumer-secret token-secret)]
     (assoc request :oauth-signature signature)))
 
+(defn- update-authorization-header
+  "Update the OAuth authorization header in `request`."
+  [request]
+  (assoc-in request [:headers "Authorization"]
+            (oauth-authorization-header request)))
+
 (defn wrap-oauth-authorize-request
-  "Returns a HTTP client that adds the OAuth authorization header to
-  request."
-  [client]
-  (fn [request]
-    (-> (assoc-in
-         request [:headers "Authorization"]
-         (oauth-authorization-header request))
-        (client))))
+  "Returns a HTTP client that adds the OAuth authorization header to request."
+  [client] (fn [request] (client (update-authorization-header request))))
 
 (defn wrap-oauth-default-params
   "Returns a HTTP client with OAuth"
@@ -104,8 +104,7 @@
 (defn wrap-oauth-sign-request
   "Returns a HTTP client that signs an OAuth request."
   [client & [consumer-secret token-secret]]
-  (fn [request]
-    (client (oauth-sign-request request consumer-secret token-secret))))
+  (fn [request] (client (oauth-sign-request request consumer-secret token-secret))))
 
 (defn make-consumer
   "Returns an OAuth consumer HTTP client."
