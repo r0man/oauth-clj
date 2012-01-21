@@ -15,6 +15,18 @@
   (is (= {:a "1"} (compact-map {:a "1" :b nil})))
   (is (= {:a "1"} (compact-map {:a "1" :b ""} blank?))))
 
+(deftest test-content-type
+  (are [type expected]
+    (is (= expected (content-type {:headers {"content-type" type}})))
+    "text/javascript" "text/javascript"
+    "text/javascript; charset=UTF-8" "text/javascript"))
+
+(deftest test-decode-body
+  (is (= "body" (decode-body {:body "body"})))
+  (let [body (decode-body {:body {:x 1} :status 200})]
+    (is (= {:x 1} body))
+    (is (= {:status 200} (meta body)))))
+
 (deftest test-format-base-url
   (are [request expected]
     (is (= expected (format-base-url request)))

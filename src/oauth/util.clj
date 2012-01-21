@@ -5,6 +5,7 @@
            javax.crypto.Mac
            javax.crypto.spec.SecretKeySpec)
   (:use [clj-http.util :only (base64-encode url-encode url-decode)]
+        [clojure.data.json :only (read-json)]
         [clojure.string :only (join replace split upper-case)]
         [inflections.core :only (hyphenize underscore)]
         [inflections.transform :only (transform-keys transform-values)]))
@@ -21,6 +22,31 @@
     (reduce
      #(if (pred (get map %2)) %1 (assoc %1 %2 (get map %2)))
      {} (keys map))))
+
+(defn content-type
+  "Returns the content type of `response`."
+  [response]
+  (first (split (get (:headers response) "content-type") #";")))
+
+(defn decode-body
+  "Returns the :body key of `request`. If body is an instance of
+  clojure.lang.IMeta, the other request keys will be attached as meta
+  data."
+  [{:keys [body] :as response}]
+  (if (instance? clojure.lang.IMeta body)
+    (with-meta body (dissoc response :body))
+    body))
+
+(defmulti decode-response
+  "Decode `response` according to the content-type header."
+  (fn [response] (content-type response)))
+
+(defmethod decode-response "text/javascript" [response]
+  (-> (decode-body (assoc response :body (read-json (:body response))))
+      (transform-keys hyphenize)))
+
+(defmethod decode-response :default [response]
+  (decode-body response))
 
 (defn format-option [[k v]]
   (format "%s=\"%s\"" (underscore (name k)) (url-encode (str v))))
@@ -106,3 +132,8 @@
 (defn oauth-params
   "Returns a map containing only the OAuth entries."
   [map] (transform-keys (select-keys map (oauth-keys map)) (comp name underscore)))
+
+(defn wrap-decode-response
+  "Returns an HTTP client that decodes the request body accoring to
+  the content-type header."
+  [client] (fn [request] (decode-response (client request))))

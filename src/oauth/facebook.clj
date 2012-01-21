@@ -1,5 +1,6 @@
 (ns oauth.facebook
-  (:require [oauth.v2 :as v2]))
+  (:require [oauth.v2 :as v2])
+  (:use oauth.util))
 
 (def ^:dynamic *oauth-access-token-url*
   "https://graph.facebook.com/oauth/access_token")
@@ -25,4 +26,5 @@
 (defn oauth-client
   "Returns a Facebook OAuth client."
   [access-token]
-  (v2/make-consumer access-token))
+  (wrap-decode-response
+   (v2/make-consumer access-token)))
