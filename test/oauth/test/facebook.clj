@@ -11,7 +11,7 @@
 
 (def facebook-client-secret "a91bac323651f4f1633d0a6913529878")
 
-(def facebook-callback "http://localhost/oauth/facebook/callback")
+(def facebook-redirect-uri "http://localhost/oauth/facebook/callback")
 
 (def facebook-code
   (str "AQDkFVB9TRIhhcZPfFkQ-cil4LEQrfjxotOBDA8Vd8aNUVDcLp9-D9aT-HJFIT3CbDi1BpXkynurKEynYB-ERz_QImN8vhAkR1S"
@@ -26,7 +26,7 @@
          facebook-client-id
          facebook-client-secret
          facebook-code
-         facebook-callback)]
+         facebook-redirect-uri)]
     (is (string? (:access-token access-token)))
     (is (string? (:expires access-token)))))
 
@@ -34,12 +34,12 @@
   (is (= (str "https://www.facebook.com/dialog/oauth?"
               "client_id=287169314674516&"
               "redirect_uri=http%3A%2F%2Flocalhost%2Foauth%2Ffacebook%2Fcallback")
-         (oauth-authorization-url facebook-client-id facebook-callback)))
+         (oauth-authorization-url facebook-client-id facebook-redirect-uri)))
   (is (= (str "https://www.facebook.com/dialog/oauth?"
               "client_id=287169314674516&"
               "redirect_uri=http%3A%2F%2Flocalhost%2Foauth%2Ffacebook%2Fcallback&"
               "scope=email%2Cread_stream")
-         (oauth-authorization-url facebook-client-id facebook-callback :scope "email,read_stream"))))
+         (oauth-authorization-url facebook-client-id facebook-redirect-uri :scope "email,read_stream"))))
 
 (deftest test-oauth-authorize
   (let [client-id facebook-client-id

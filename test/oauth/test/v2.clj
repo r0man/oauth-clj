@@ -2,7 +2,7 @@
   (:require [clj-http.client :as http])
   (:use [clojure.java.browse :only (browse-url)]
         [oauth.facebook :only (*oauth-access-token-url* *oauth-authorization-url*)]
-        [oauth.test.facebook :only (facebook-access-token facebook-access-token facebook-client-id facebook-code facebook-callback facebook-client-secret)]
+        [oauth.test.facebook :only (facebook-access-token facebook-access-token facebook-client-id facebook-code facebook-redirect-uri facebook-client-secret)]
         clojure.test
         oauth.v2))
 
@@ -16,7 +16,7 @@
          facebook-client-id
          facebook-client-secret
          facebook-code
-         facebook-callback)]
+         facebook-redirect-uri)]
     (is (string? (:access-token access-token)))
     (is (string? (:expires access-token)))))
 
@@ -24,12 +24,12 @@
   (is (= (str "https://www.facebook.com/dialog/oauth?"
               "client_id=287169314674516&"
               "redirect_uri=http%3A%2F%2Flocalhost%2Foauth%2Ffacebook%2Fcallback")
-         (oauth-authorization-url *oauth-authorization-url* facebook-client-id facebook-callback)))
+         (oauth-authorization-url *oauth-authorization-url* facebook-client-id facebook-redirect-uri)))
   (is (= (str "https://www.facebook.com/dialog/oauth?"
               "client_id=287169314674516&"
               "redirect_uri=http%3A%2F%2Flocalhost%2Foauth%2Ffacebook%2Fcallback&"
               "scope=email%2Cread_stream")
-         (oauth-authorization-url *oauth-authorization-url* facebook-client-id facebook-callback :scope "email,read_stream"))))
+         (oauth-authorization-url *oauth-authorization-url* facebook-client-id facebook-redirect-uri :scope "email,read_stream"))))
 
 (deftest test-oauth-authorize
   (let [url *oauth-authorization-url*
