@@ -8,8 +8,14 @@
 (def ^:dynamic *oauth-authorization-url*
   "https://api.twitter.com/oauth/authorize")
 
+(def ^:dynamic *oauth-authentication-url*
+  "https://api.twitter.com/oauth/authenticate")
+
 (def ^:dynamic *oauth-request-token-url*
   "https://api.twitter.com/oauth/request_token")
+
+(defn oauth-authentication-url [oauth-token]
+  (format "%s?oauth_token=%s" *oauth-authentication-url* oauth-token))
 
 (defn oauth-authorize
   "Sends the user to Twitter's authorization endpoint."
