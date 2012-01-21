@@ -100,11 +100,11 @@
 
 (defn make-consumer
   "Returns an OAuth consumer HTTP client."
-  [oauth-params]
+  [oauth-defaults]
   (-> clj-http.core/request
       (wrap-oauth-authorize-request)
       (wrap-oauth-sign-request)
-      (wrap-oauth-default-params oauth-params)
+      (wrap-oauth-default-params oauth-defaults)
       (http/wrap-request)
       (wrap-decode-response)))
 
