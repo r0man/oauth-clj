@@ -114,7 +114,8 @@
       (wrap-oauth-authorize-request)
       (wrap-oauth-sign-request)
       (wrap-oauth-default-params oauth-params)
-      (http/wrap-request)))
+      (http/wrap-request)
+      (wrap-decode-response)))
 
 (defn oauth-access-token
   "Obtain the OAuth access token."
@@ -124,7 +125,7 @@
          :oauth-token oauth-token
          :oauth-verifier oauth-verifier})
        {:method :post :url url})
-      :body parse-body))
+      parse-body))
 
 (defn oauth-request-token
   "Obtain the OAuth request token to request user authorization."
@@ -133,7 +134,7 @@
         {:oauth-consumer-key oauth-consumer-key
          :oauth-consumer-secret oauth-consumer-secret})
        {:method :post :url url})
-      :body parse-body))
+      parse-body))
 
 (defn oauth-client
   "Returns the OAuth HTTP client."

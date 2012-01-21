@@ -37,13 +37,21 @@
     (with-meta body (dissoc response :body))
     body))
 
+(defn decode-json [response]
+  (if (string? (:body response))
+    (-> (decode-body (assoc response :body (read-json (:body response))))
+        (transform-keys hyphenize))
+    (decode-body response)))
+
 (defmulti decode-response
   "Decode `response` according to the content-type header."
   (fn [response] (content-type response)))
 
+(defmethod decode-response "application/json" [response]
+  (decode-json response))
+
 (defmethod decode-response "text/javascript" [response]
-  (-> (decode-body (assoc response :body (read-json (:body response))))
-      (transform-keys hyphenize)))
+  (decode-json response))
 
 (defmethod decode-response :default [response]
   (decode-body response))

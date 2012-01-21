@@ -62,5 +62,8 @@
     (is (= "true" (:oauth-callback-confirmed request-token)))))
 
 (deftest test-verify-credentials
-  (let [response (twitter-client {:method :get :url "https://api.twitter.com/1/account/verify_credentials.json"})]
-    (is (= 200 (:status response)))))
+  (let [user (twitter-client {:method :get :url "https://api.twitter.com/1/account/verify_credentials.json"})]
+    (is (map? user))
+    (is (= 469240209 (:id user)))
+    (let [response (meta user)]
+      (is (= 200 (:status response))))))
