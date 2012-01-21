@@ -1,7 +1,7 @@
 (ns oauth.v1
   (:refer-clojure :exclude (replace))
-  (:require [clj-http.client :as http])
-  (:use [clj-http.util :only (base64-encode)]
+  (:use [clj-http.client :only (wrap-request)]
+        [clj-http.util :only (base64-encode)]
         [clojure.java.browse :only (browse-url)]
         [clojure.string :only (join replace)]
         [inflections.transform :only (transform-keys)]
@@ -105,7 +105,7 @@
       (wrap-oauth-authorization)
       (wrap-oauth-signature)
       (wrap-oauth-defaults oauth-defaults)
-      (http/wrap-request)
+      (wrap-request)
       (wrap-decode-response)))
 
 (defn oauth-access-token
