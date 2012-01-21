@@ -7,7 +7,7 @@
   (assoc-in request [:query-params "access_token"] access-token))
 
 (defn oauth-access-token
-  "Obtain the OAuth v2 access token."
+  "Obtain the OAuth access token."
   [url client-id client-secret code redirect-uri]
   (-> {:method :get
        :url url
@@ -19,7 +19,7 @@
       http/request :body parse-body))
 
 (defn oauth-authorization-url
-  "Returns the OAuth v2 authorization url."
+  "Returns the OAuth authorization url."
   [url client-id redirect-uri & {:as options}]
   (->> (assoc options :client-id client-id :redirect-uri redirect-uri)
        (format-query-params)
@@ -31,13 +31,13 @@
   (browse-url (apply oauth-authorization-url url client-id redirect-uri options)))
 
 (defn wrap-oauth-access-token
-  "Returns a HTTP client that adds the OAuth v2 `access-token` to `request`."
+  "Returns a HTTP client that adds the OAuth `access-token` to `request`."
   [client & [access-token]]
   (fn [{:keys [oauth-access-token] :as request}]
     (client (update-access-token request (or oauth-access-token access-token)))))
 
 (defn make-consumer
-  "Returns an OAuth v2 consumer HTTP client."
+  "Returns an OAuth consumer HTTP client."
   [access-token]
   (-> clj-http.core/request
       (http/wrap-request)
