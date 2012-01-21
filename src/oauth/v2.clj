@@ -3,17 +3,8 @@
   (:use [clojure.java.browse :only (browse-url)]
         oauth.util))
 
-(defn oauth-authorization-url
-  "Returns the OAuth v2 authorization url."
-  [url client-id redirect-uri & {:as options}]
-  (->> (assoc options :client-id client-id :redirect-uri redirect-uri)
-       (format-query-params)
-       (str url "?")))
-
-(defn oauth-authorize
-  "Send the user to the authorization url via `browse-url`."
-  [url client-id redirect-uri & options]
-  (browse-url (apply oauth-authorization-url url client-id redirect-uri options)))
+(defn- update-access-token [request access-token]
+  (assoc-in request [:query-params "access_token"] access-token))
 
 (defn oauth-access-token
   "Obtain the OAuth v2 access token."
@@ -27,14 +18,23 @@
         "redirect_uri" redirect-uri}}
       http/request :body parse-body))
 
+(defn oauth-authorization-url
+  "Returns the OAuth v2 authorization url."
+  [url client-id redirect-uri & {:as options}]
+  (->> (assoc options :client-id client-id :redirect-uri redirect-uri)
+       (format-query-params)
+       (str url "?")))
+
+(defn oauth-authorize
+  "Send the user to the authorization url via `browse-url`."
+  [url client-id redirect-uri & options]
+  (browse-url (apply oauth-authorization-url url client-id redirect-uri options)))
+
 (defn wrap-oauth-access-token
   "Returns a HTTP client that adds the OAuth v2 `access-token` to `request`."
   [client & [access-token]]
-  (fn [request]
-    (-> (assoc-in
-         request [:query-params "access_token"]
-         (or (:oauth-access-token request) access-token))
-        (client))))
+  (fn [{:keys [oauth-access-token] :as request}]
+    (client (update-access-token request (or oauth-access-token access-token)))))
 
 (defn make-consumer
   "Returns an OAuth v2 consumer HTTP client."
