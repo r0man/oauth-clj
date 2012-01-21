@@ -11,14 +11,6 @@
 
 (def ^:dynamic *oauth-version* "1.0")
 
-(def oauth-signature-keys
-  #{:oauth-consumer-key
-    :oauth-nonce
-    :oauth-signature-method
-    :oauth-timestamp
-    :oauth-token
-    :oauth-version})
-
 (defn oauth-authorization-header
   "Returns the OAuth header of `request`."
   [request]
