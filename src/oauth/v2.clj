@@ -14,7 +14,7 @@
        :query-params
        {"client_id" client-id
         "client_secret" client-secret
-        "code" (percent-encode code)
+        "code" code
         "redirect_uri" redirect-uri}}
       http/request :body parse-body))
 
