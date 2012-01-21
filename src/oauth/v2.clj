@@ -1,6 +1,6 @@
 (ns oauth.v2
-  (:require [clj-http.client :as http])
-  (:use [clojure.java.browse :only (browse-url)]
+  (:use [clj-http.client :only (request wrap-request)]
+        [clojure.java.browse :only (browse-url)]
         oauth.util))
 
 (defn- update-access-token [request access-token]
@@ -9,14 +9,13 @@
 (defn oauth-access-token
   "Obtain the OAuth access token."
   [url client-id client-secret code redirect-uri]
-  (-> {:method :get
-       :url url
+  (-> {:method :get :url url
        :query-params
        {"client_id" client-id
         "client_secret" client-secret
         "code" code
         "redirect_uri" redirect-uri}}
-      http/request :body parse-body))
+      request :body parse-body))
 
 (defn oauth-authorization-url
   "Returns the OAuth authorization url."
@@ -40,6 +39,6 @@
   "Returns a HTTP client for version 2 of the OAuth protocol."
   [access-token]
   (-> clj-http.core/request
-      (http/wrap-request)
+      (wrap-request)
       (wrap-oauth-access-token access-token)
       (wrap-decode-response)))
