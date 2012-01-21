@@ -5,11 +5,11 @@
 (def ^:dynamic *oauth-access-token-url*
   "https://api.twitter.com/oauth/access_token")
 
-(def ^:dynamic *oauth-authorization-url*
-  "https://api.twitter.com/oauth/authorize")
-
 (def ^:dynamic *oauth-authentication-url*
   "https://api.twitter.com/oauth/authenticate")
+
+(def ^:dynamic *oauth-authorization-url*
+  "https://api.twitter.com/oauth/authorize")
 
 (def ^:dynamic *oauth-request-token-url*
   "https://api.twitter.com/oauth/request_token")
