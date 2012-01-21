@@ -99,8 +99,8 @@
 (deftest test-oauth-timestamp
   (is (number? (oauth-timestamp))))
 
-(deftest test-wrap-oauth-sign-request
-  ((wrap-oauth-sign-request
+(deftest test-wrap-oauth-signature
+  ((wrap-oauth-signature
     #(is (= "tnnArxj06cWHq44gCs1OSKk/jLY=" (:oauth-signature %1))))
    (assoc twitter-update-status
      :oauth-consumer-secret "kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw"

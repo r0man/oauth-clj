@@ -93,7 +93,7 @@
          (merge params request)
          (client))))
 
-(defn wrap-oauth-sign-request
+(defn wrap-oauth-signature
   "Returns a HTTP client that signs an OAuth request."
   [client & [consumer-secret token-secret]]
   (fn [request] (client (oauth-sign-request request consumer-secret token-secret))))
@@ -103,7 +103,7 @@
   [oauth-defaults]
   (-> clj-http.core/request
       (wrap-oauth-authorize-request)
-      (wrap-oauth-sign-request)
+      (wrap-oauth-signature)
       (wrap-oauth-defaults oauth-defaults)
       (http/wrap-request)
       (wrap-decode-response)))
