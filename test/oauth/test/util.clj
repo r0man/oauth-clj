@@ -1,7 +1,7 @@
 (ns oauth.test.util
   (:use [clojure.string :only (blank?)]
         clojure.test
-        oauth.test.examples
+        oauth.test.twitter
         oauth.util))
 
 (deftest test-byte-array?

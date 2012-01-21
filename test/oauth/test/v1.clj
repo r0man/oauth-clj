@@ -2,7 +2,7 @@
   (:require [clj-http.client :as http])
   (:use [clojure.java.browse :only (browse-url)]
         clojure.test
-        oauth.test.examples
+        oauth.test.twitter
         oauth.v1))
 
 (deftest test-oauth-authorization-header

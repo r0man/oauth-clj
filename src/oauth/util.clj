@@ -34,8 +34,9 @@
 (defn format-query-params [params]
   (let [params (compact-map params)]
     (if-not (empty? params)
-      (-> (transform-keys params #(if (string? %1) %1 (-> %1 name underscore)))
-          (http/generate-query-string)))))
+      (->> (transform-keys params #(if (string? %1) %1 (-> %1 name underscore)))
+           seq flatten (apply sorted-map)
+           (http/generate-query-string)))))
 
 (defn root-url [{:keys [scheme server-name server-port]}]
   (str scheme "://" server-name (when server-port (str ":" server-port))))
