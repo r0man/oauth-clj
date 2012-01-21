@@ -82,7 +82,7 @@
   "Returns a HTTP client that adds the OAuth authorization header to request."
   [client] (fn [request] (client (update-authorization-header request))))
 
-(defn wrap-oauth-default-params
+(defn wrap-oauth-defaults
   "Returns a HTTP client with OAuth"
   [client & [params]]
   (fn [request]
@@ -104,7 +104,7 @@
   (-> clj-http.core/request
       (wrap-oauth-authorize-request)
       (wrap-oauth-sign-request)
-      (wrap-oauth-default-params oauth-defaults)
+      (wrap-oauth-defaults oauth-defaults)
       (http/wrap-request)
       (wrap-decode-response)))
 
