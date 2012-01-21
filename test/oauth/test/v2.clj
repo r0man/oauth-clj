@@ -6,9 +6,6 @@
         clojure.test
         oauth.v2))
 
-(deftest test-make-consumer
-  (is (fn? (make-consumer facebook-access-token))))
-
 (deftest test-oauth-access-token
   (let [access-token
         (oauth-access-token
@@ -37,6 +34,9 @@
         redirect-uri "http://example.com"]
     (with-redefs [browse-url (fn [target] (is (= (oauth-authorization-url url client-id redirect-uri) target)))]
       (oauth-authorize url client-id redirect-uri))))
+
+(deftest test-oauth-client
+  (is (fn? (oauth-client facebook-access-token))))
 
 (deftest test-wrap-oauth-access-token
   ((wrap-oauth-access-token

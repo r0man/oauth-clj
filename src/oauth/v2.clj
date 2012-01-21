@@ -36,8 +36,8 @@
   (fn [{:keys [oauth-access-token] :as request}]
     (client (update-access-token request (or oauth-access-token access-token)))))
 
-(defn make-consumer
-  "Returns an OAuth consumer HTTP client."
+(defn oauth-client
+  "Returns a HTTP client for version 2 of the OAuth protocol."
   [access-token]
   (-> clj-http.core/request
       (http/wrap-request)

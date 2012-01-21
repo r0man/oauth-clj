@@ -128,7 +128,7 @@
       parse-body))
 
 (defn oauth-client
-  "Returns the OAuth HTTP client."
+  "Returns a HTTP client for version 1 of the OAuth protocol."
   [oauth-consumer-key oauth-consumer-secret oauth-token oauth-token-secret]
   (make-consumer
    {:oauth-consumer-key oauth-consumer-key
