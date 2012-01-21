@@ -107,5 +107,5 @@
      :oauth-token-secret "LswwdoUaIvS8ltyTt5jkRh4J50vUPVVHtR2YPi5kE")))
 
 (deftest test-make-consumer
-  (let [consumer (make-consumer {})]
+  (let [consumer (make-consumer)]
     (is (fn? consumer))))
