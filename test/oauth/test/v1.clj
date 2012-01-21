@@ -60,7 +60,7 @@
 
 (deftest test-oauth-request-signature
   (is (= "tnnArxj06cWHq44gCs1OSKk/jLY="
-         (oauth-request-signature twitter-update-status oauth-consumer-secret oauth-token-secret)))
+         (oauth-request-signature twitter-update-status "kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw" "LswwdoUaIvS8ltyTt5jkRh4J50vUPVVHtR2YPi5kE")))
   (is (= "8wUi7m5HFQy76nowoCThusfgB+Q="
          (oauth-request-signature twitter-request-token "MCD8BKwGdgPHvAuvgvz4EQpqDAtx89grbuNMRd7Eh98" nil))))
 
@@ -89,9 +89,12 @@
 (deftest test-oauth-signing-key
   (are [consumer-secret token-secret expected]
     (is (= expected (oauth-signing-key consumer-secret token-secret)))
-    "MCD8BKwGdgPHvAuvgvz4EQpqDAtx89grbuNMRd7Eh98" nil "MCD8BKwGdgPHvAuvgvz4EQpqDAtx89grbuNMRd7Eh98&"
-    "MCD8BKwGdgPHvAuvgvz4EQpqDAtx89grbuNMRd7Eh98" "" "MCD8BKwGdgPHvAuvgvz4EQpqDAtx89grbuNMRd7Eh98&"
-    oauth-consumer-secret oauth-token-secret "kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw&LswwdoUaIvS8ltyTt5jkRh4J50vUPVVHtR2YPi5kE"))
+    "MCD8BKwGdgPHvAuvgvz4EQpqDAtx89grbuNMRd7Eh98" nil
+    "MCD8BKwGdgPHvAuvgvz4EQpqDAtx89grbuNMRd7Eh98&"
+    "MCD8BKwGdgPHvAuvgvz4EQpqDAtx89grbuNMRd7Eh98" ""
+    "MCD8BKwGdgPHvAuvgvz4EQpqDAtx89grbuNMRd7Eh98&"
+    "kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw" "LswwdoUaIvS8ltyTt5jkRh4J50vUPVVHtR2YPi5kE"
+    "kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw&LswwdoUaIvS8ltyTt5jkRh4J50vUPVVHtR2YPi5kE"))
 
 (deftest test-oauth-timestamp
   (is (number? (oauth-timestamp))))
@@ -100,8 +103,8 @@
   ((wrap-oauth-sign-request
     #(is (= "tnnArxj06cWHq44gCs1OSKk/jLY=" (:oauth-signature %1))))
    (assoc twitter-update-status
-     :oauth-consumer-secret oauth-consumer-secret
-     :oauth-token-secret oauth-token-secret)))
+     :oauth-consumer-secret "kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw"
+     :oauth-token-secret "LswwdoUaIvS8ltyTt5jkRh4J50vUPVVHtR2YPi5kE")))
 
 (deftest test-make-consumer
   (let [consumer (make-consumer {})]
