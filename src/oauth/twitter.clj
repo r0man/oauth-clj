@@ -14,6 +14,11 @@
 (def ^:dynamic *oauth-request-token-url*
   "https://api.twitter.com/oauth/request_token")
 
+(defn oauth-access-token
+  "Obtain a OAuth access token from Twitter."
+  [oauth-consumer-key oauth-token oauth-verifier]
+  (v1/oauth-access-token *oauth-access-token-url* oauth-consumer-key oauth-token oauth-verifier))
+
 (defn oauth-authentication-url
   "Returns Twitter's OAuth authentication url."
   [oauth-token] (format "%s?oauth_token=%s" *oauth-authentication-url* oauth-token))
@@ -21,11 +26,6 @@
 (defn oauth-authorize
   "Sends the user to Twitter's authorization endpoint."
   [oauth-token] (v1/oauth-authorize *oauth-authorization-url* oauth-token))
-
-(defn oauth-access-token
-  "Obtain a OAuth access token from Twitter."
-  [oauth-consumer-key oauth-token oauth-verifier]
-  (v1/oauth-access-token *oauth-access-token-url* oauth-consumer-key oauth-token oauth-verifier))
 
 (defn oauth-client
   "Returns a OAuth Twitter client."
