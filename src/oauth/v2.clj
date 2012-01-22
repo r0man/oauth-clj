@@ -1,4 +1,5 @@
 (ns oauth.v2
+  (:require [clj-http.core :as core])
   (:use [clj-http.client :only (request wrap-request)]
         [clojure.java.browse :only (browse-url)]
         oauth.util))
@@ -38,7 +39,7 @@
 (defn oauth-client
   "Returns a HTTP client for version 2 of the OAuth protocol."
   [access-token]
-  (-> clj-http.core/request
+  (-> core/request
       (wrap-request)
       (wrap-oauth-access-token access-token)
       (wrap-decode-response)))
