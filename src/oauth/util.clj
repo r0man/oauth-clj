@@ -106,7 +106,7 @@
   [request]
   (if-let [body (:body request)]
     (let [body (if (byte-array? body) (String. body) (str body))]
-      (-> (apply hash-map (split body #"="))
+      (-> (apply hash-map (split body #"[=&]"))
           (transform-values url-decode)))))
 
 (defn percent-encode
