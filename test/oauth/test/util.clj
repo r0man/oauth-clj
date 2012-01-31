@@ -87,7 +87,9 @@
     twitter-update-status
     {"status" "Hello Ladies + Gentlemen, a signed OAuth request!"}
     (assoc twitter-update-status :body (.getBytes (:body twitter-update-status)))
-    {"status" "Hello Ladies + Gentlemen, a signed OAuth request!"}))
+    {"status" "Hello Ladies + Gentlemen, a signed OAuth request!"}
+    (assoc twitter-update-status :body "x=foo&y=bar")
+    {"x" "foo" "y" "bar"}))
 
 (deftest test-random-base64
   (is (string? (random-base64 1)))
