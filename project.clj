@@ -1,4 +1,4 @@
-(defproject oauth-clj "0.0.3"
+(defproject oauth-clj "0.0.4-SNAPSHOT"
   :description "Clojure OAuth library."
   :dependencies [[clj-http "0.3.0"]
                  [inflections "0.6.5"]
