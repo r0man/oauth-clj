@@ -3,10 +3,11 @@
   (:refer-clojure :exclude (replace))
   (:import java.security.SecureRandom
            javax.crypto.Mac
-           javax.crypto.spec.SecretKeySpec)
+           javax.crypto.spec.SecretKeySpec
+           org.apache.http.entity.StringEntity)
   (:use [clj-http.util :only (base64-encode url-encode url-decode)]
         [clojure.data.json :only (read-json)]
-        [clojure.string :only (join replace split upper-case)]
+        [clojure.string :only (blank? join replace split upper-case)]
         [inflections.core :only (hyphenize underscore)]
         [inflections.transform :only (transform-keys transform-values)]))
 
@@ -93,6 +94,18 @@
                  (.init key))]
        (.doFinal mac (.getBytes msg encoding)))))
 
+(defn- to-str [obj]
+  (cond
+   (nil? obj) nil
+   (instance? StringEntity obj)
+   (let [stream (.getContent (.clone obj))
+         buffer (byte-array (.available stream))]
+     (.read stream buffer)
+     (String. buffer))
+   (byte-array? obj)
+   (String. obj)
+   :else (str obj)))
+
 (defn parse-body
   "Parse `body` and return a map with hypenized keys and their values."
   [body]
@@ -104,8 +117,8 @@
 (defn parse-body-params
   "Parse the body of `request` as an URL encoded parameter list."
   [request]
-  (if-let [body (:body request)]
-    (let [body (if (byte-array? body) (String. body) (str body))]
+  (let [body (to-str (:body request))]
+    (if-not (blank? body)
       (-> (apply hash-map (split body #"[=&]"))
           (transform-values url-decode)))))
 

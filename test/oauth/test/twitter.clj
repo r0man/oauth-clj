@@ -67,3 +67,10 @@
     (is (= 469240209 (:id user)))
     (let [response (meta user)]
       (is (= 200 (:status response))))))
+
+(deftest test-update-status
+  (let [status (format "Test %s" (java.util.Date.))
+        body (str "status=" status)
+        response (twitter-client {:method :post :url "https://api.twitter.com/1/statuses/update.json" :body body})]
+    (is (string? (:id-str response)))
+    (is (= status (:text response)))))

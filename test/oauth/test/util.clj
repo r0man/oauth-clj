@@ -1,4 +1,5 @@
 (ns oauth.test.util
+  (:import org.apache.http.entity.StringEntity)
   (:use [clojure.string :only (blank?)]
         clojure.test
         oauth.test.twitter
@@ -81,15 +82,20 @@
     "☃" "%E2%98%83"))
                                         ;
 (deftest test-parse-body-params
+  (testing "body must be key/value pairs"
+    (is (thrown? Exception (parse-body-params {:body "x"}))))
   (are [request expected]
     (is (= expected (parse-body-params request)))
     {} nil
+    {:body ""} nil
     twitter-update-status
     {"status" "Hello Ladies + Gentlemen, a signed OAuth request!"}
     (assoc twitter-update-status :body (.getBytes (:body twitter-update-status)))
     {"status" "Hello Ladies + Gentlemen, a signed OAuth request!"}
     (assoc twitter-update-status :body "x=foo&y=bar")
-    {"x" "foo" "y" "bar"}))
+    {"x" "foo" "y" "bar"}
+    {:body (StringEntity. (:body twitter-update-status))}
+    {"status" "Hello Ladies + Gentlemen, a signed OAuth request!"}))
 
 (deftest test-random-base64
   (is (string? (random-base64 1)))
