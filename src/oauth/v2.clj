@@ -10,7 +10,7 @@
 (defn oauth-access-token
   "Obtain the OAuth access token."
   [url client-id client-secret code redirect-uri]
-  (-> {:method :get :url url
+  (-> {:method :post :url url
        :query-params
        {"client_id" client-id
         "client_secret" client-secret
