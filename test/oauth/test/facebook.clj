@@ -14,8 +14,8 @@
 (def facebook-redirect-uri "http://localhost/oauth/facebook/callback")
 
 (def facebook-code
-  (str "AQDkFVB9TRIhhcZPfFkQ-cil4LEQrfjxotOBDA8Vd8aNUVDcLp9-D9aT-HJFIT3CbDi1BpXkynurKEynYB-ERz_QImN8vhAkR1S"
-       "z5kfLy9vfbMi_-eaJA_SfCBDw4cuq-GkmYg6GjyyAtJDhplVSTd6u-Fy7WlNv8i95qODKfo5C5XMXOIkhcu0yAJ4KtRZfCVI#_=_"))
+  (str "AQDvwFJukHaOiG2llxqRQJFb8_jmOXx01cux_eeOUWm4m-MNtheROpQlDVJMgP-5Kk64CWrZQSXhtz_e_Rtdm45YkMC4rAfAmFnbDRiktL-"
+       "gtEqEjDxwVKWknkEzfI_lMKp26KVObRwPOLg58NoOCTOdlzIRjVQvINDc-veRX5C5eLcY1SIb4zGTepg4_HcYK8o#_=_"))
 
 (deftest test-me-endpoint
   (let [user ((oauth-client facebook-access-token) {:method :get :url "https://graph.facebook.com/me"})]
