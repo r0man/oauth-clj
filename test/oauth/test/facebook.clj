@@ -9,7 +9,7 @@
 
 (def facebook-client-id "287169314674516")
 
-(def facebook-client-secret "a91bac323651f4f1633d0a6913529878")
+(def facebook-client-secret "d003ce598f9977a4d0745af687335c88")
 
 (def facebook-redirect-uri "http://localhost/oauth/facebook/callback")
 
