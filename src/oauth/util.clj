@@ -77,7 +77,9 @@
            (http/generate-query-string)))))
 
 (defn root-url [{:keys [scheme server-name server-port]}]
-  (str scheme "://" server-name (when server-port (str ":" server-port))))
+  (str scheme "://" server-name (when (and server-port
+                                           (not (#{80 443} server-port)))
+                                  (str ":" server-port))))
 
 (defn format-http-method [request]
   (upper-case (name (or (:method request) (:request-method request)))))
