@@ -1,6 +1,6 @@
 (ns oauth.v1
   (:refer-clojure :exclude (replace))
-  (:use [clj-http.client :only (wrap-request)]
+  (:use [clj-http.client :only (wrap-request wrap-url)]
         [clj-http.core :only (request)]
         [clj-http.util :only (base64-encode)]
         [clojure.java.browse :only (browse-url)]
@@ -103,10 +103,11 @@
   "Returns an OAuth consumer HTTP client."
   [& {:as oauth-defaults}]
   (-> request
+      (wrap-request)
       (wrap-oauth-authorization)
       (wrap-oauth-signature)
+      (wrap-url)
       (wrap-oauth-defaults oauth-defaults)
-      (wrap-request)
       (wrap-decode-response)))
 
 (defn oauth-access-token
