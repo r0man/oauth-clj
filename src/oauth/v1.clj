@@ -104,6 +104,7 @@
   [& {:as oauth-defaults}]
   (-> request
       (wrap-request)
+      (wrap-content-type x-www-form-urlencoded)
       (wrap-oauth-authorization)
       (wrap-oauth-signature)
       (wrap-url)

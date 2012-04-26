@@ -41,5 +41,6 @@
   [access-token]
   (-> core/request
       (wrap-request)
+      (wrap-content-type x-www-form-urlencoded)
       (wrap-oauth-access-token access-token)
       (wrap-decode-response)))
