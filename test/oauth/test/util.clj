@@ -119,3 +119,9 @@
     {"oauth_signature_method" "HMAC-SHA1" "oauth_version" "1.0"}
     {:oauth_signature_method "HMAC-SHA1" :oauth-version "1.0" :q 1}
     {"oauth_signature_method" "HMAC-SHA1" "oauth_version" "1.0"}))
+
+(deftest test-wrap-content-type
+  (is (= {:content-type x-www-form-urlencoded}
+         ((wrap-content-type identity x-www-form-urlencoded) {})))
+  (is (= {:content-type "text/plain"}
+         ((wrap-content-type identity x-www-form-urlencoded) {:content-type "text/plain"}))))

@@ -11,6 +11,8 @@
         [inflections.core :only (hyphenize underscore)]
         [inflections.transform :only (transform-keys transform-values)]))
 
+(def x-www-form-urlencoded "application/x-www-form-urlencoded")
+
 (defn byte-array?
   "Returns true if `arg` is a byte array, otherwise false."
   [arg] (instance? (Class/forName "[B") arg))
@@ -79,7 +81,7 @@
 (defn root-url [{:keys [scheme server-name server-port]}]
   (str (name scheme) "://" server-name (when (and server-port
                                                   (not (#{80 443} server-port)))
-                                    (str ":" server-port))))
+                                         (str ":" server-port))))
 
 (defn format-http-method [request]
   (upper-case (name (or (:method request) (:request-method request)))))
@@ -158,6 +160,14 @@
 (defn oauth-params
   "Returns a map containing only the OAuth entries."
   [map] (transform-keys (select-keys map (oauth-keys map)) (comp name underscore)))
+
+(defn wrap-content-type
+  "Returns a HTTP client that sets the Content-Type header to `request`."
+  [client content-type]
+  (fn [request]
+    (->> (or (:content-type request) content-type)
+         (assoc request :content-type)
+         (client))))
 
 (defn wrap-decode-response
   "Returns an HTTP client that decodes the request body accoring to
