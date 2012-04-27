@@ -29,6 +29,14 @@
     (with-redefs [browse-url (fn [url] (is (= expected url)))]
       (oauth-authorize "https://api.twitter.com/oauth/authorize" "9BVHFCl8PCvGekptmdtL1169QkppJG6PgpUDQDWow"))))
 
+(deftest test-oauth-callback-confirmed?
+  (is (not (oauth-callback-confirmed? {})))
+  (is (not (oauth-callback-confirmed? {:oauth-callback-confirmed false})))
+  (is (not (oauth-callback-confirmed? {:oauth-callback-confirmed "false"})))
+  (is (not (oauth-callback-confirmed? {:oauth-callback-confirmed "x"})))
+  (is (oauth-callback-confirmed? {:oauth-callback-confirmed true}))
+  (is (oauth-callback-confirmed? {:oauth-callback-confirmed "true"})))
+
 (deftest test-oauth-nonce
   (is (string? (oauth-nonce)))
   (is (not (= (oauth-nonce) (oauth-nonce)))))

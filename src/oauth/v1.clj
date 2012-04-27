@@ -83,6 +83,11 @@
   "Returns a HTTP client that adds the OAuth authorization header to request."
   [client] (fn [request] (client (update-authorization-header request))))
 
+(defn oauth-callback-confirmed?
+  "Returns true if the :oauth-callback-confirmed key in
+  `request-token` is true, otherwise false."
+  [request-token] (Boolean/parseBoolean (str (:oauth-callback-confirmed request-token))))
+
 (defn wrap-oauth-defaults
   "Returns a HTTP client with OAuth"
   [client & [params]]
