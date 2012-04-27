@@ -23,6 +23,10 @@
   "Returns Twitter's OAuth authentication url."
   [oauth-token] (format "%s?oauth_token=%s" *oauth-authentication-url* oauth-token))
 
+(defn oauth-authorization-url
+  "Returns Twitter's OAuth authorization url."
+  [oauth-token] (format "%s?oauth_token=%s" *oauth-authorization-url* oauth-token))
+
 (defn oauth-authorize
   "Sends the user to Twitter's authorization endpoint."
   [oauth-token] (v1/oauth-authorize *oauth-authorization-url* oauth-token))

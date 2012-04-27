@@ -51,6 +51,10 @@
   (is (= "https://api.twitter.com/oauth/authenticate?oauth_token=370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb"
          (oauth-authentication-url "370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb"))))
 
+(deftest test-oauth-authorization-url
+  (is (= "https://api.twitter.com/oauth/authorize?oauth_token=370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb"
+         (oauth-authorization-url "370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb"))))
+
 (deftest test-oauth-client
   (is (fn? twitter-client)))
 
