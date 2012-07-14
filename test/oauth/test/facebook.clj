@@ -5,17 +5,18 @@
         oauth.facebook))
 
 (def facebook-access-token
-  "AAAEFLdD911QBAHwPDOLF2bJZC20CqxYvxFdYZALNc3Qah9sFBFHNKenQ4E3ZBZBG2sEpB69SEGOv0vrNcYyUNnBCO5rTwZBLsTznO0xK8PwZDZD")
+  "AAAEFLdD911QBAEsKgSwj2Dz0apsbrqd4tMnHXBuKaZCID3aMcI9XKohYgrLF1rN6qKDQIwPuHmGGgJ3tri7VT3tOPWFevD4dOjwIIcQZDZD")
 
 (def facebook-client-id "287169314674516")
 
-(def facebook-client-secret "d003ce598f9977a4d0745af687335c88")
+(def facebook-client-secret "1dd8b4e0492f3e6113f1014e38d317f9")
 
 (def facebook-redirect-uri "http://localhost/oauth/facebook/callback")
 
 (def facebook-code
-  (str "AQDvwFJukHaOiG2llxqRQJFb8_jmOXx01cux_eeOUWm4m-MNtheROpQlDVJMgP-5Kk64CWrZQSXhtz_e_Rtdm45YkMC4rAfAmFnbDRiktL-"
-       "gtEqEjDxwVKWknkEzfI_lMKp26KVObRwPOLg58NoOCTOdlzIRjVQvINDc-veRX5C5eLcY1SIb4zGTepg4_HcYK8o#_=_"))
+  (str "AQDM8FQMDIXqpOjxhMX2e0wthC8aT-QQOx_IOU0qKtpCvM8J3orAyyOMr-"
+       "RGmYBVGz42ooeGoBIYQN2eM7GGwDhbSCceyk0d6e3b_idk2QLHFtC_VJinpHCMpG78Lh4mMfrH3YpmNOd88MCXjd70EkliSECi-"
+       "AplXOIVwg2cDdUJBzrN6lt8x6Q90zlhKR2KAYY#_=_"))
 
 (deftest test-me-endpoint
   (let [user ((oauth-client facebook-access-token) {:method :get :url "https://graph.facebook.com/me"})]
