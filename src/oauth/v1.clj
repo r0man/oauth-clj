@@ -117,19 +117,19 @@
 (defn oauth-access-token
   "Obtain the OAuth access token."
   [url oauth-consumer-key oauth-token oauth-verifier]
-  (-> ((make-consumer
-        :oauth-consumer-key oauth-consumer-key
-        :oauth-token oauth-token
-        :oauth-verifier oauth-verifier)
-       {:method :post :url url})))
+  ((make-consumer
+    :oauth-consumer-key oauth-consumer-key
+    :oauth-token oauth-token
+    :oauth-verifier oauth-verifier)
+   {:method :post :url url}))
 
 (defn oauth-request-token
   "Obtain the OAuth request token to request user authorization."
   [url oauth-consumer-key oauth-consumer-secret]
-  (-> ((make-consumer
-        :oauth-consumer-key oauth-consumer-key
-        :oauth-consumer-secret oauth-consumer-secret)
-       {:method :post :url url})))
+  ((make-consumer
+    :oauth-consumer-key oauth-consumer-key
+    :oauth-consumer-secret oauth-consumer-secret)
+   {:method :post :url url}))
 
 (defn oauth-client
   "Returns a HTTP client for version 1 of the OAuth protocol."
