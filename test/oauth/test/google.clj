@@ -19,15 +19,26 @@
 (def google-code
   "kACAH-1Ng0uD2HWBWbVKhqSXoXNda8_geLaOhmm8S32pG_-isiyg2E_XMKwthn2f4oqvkl9mDaK-IvVfG85KTb4mlTlEDI_ccJ3JTVn5JKC0rjHjXkXUmN1OyA")
 
-;; (deftest test-oauth-access-token
-;;   (let [access-token
-;;         (oauth-access-token
-;;          google-client-id
-;;          google-client-secret
-;;          google-code
-;;          google-redirect-uri)]
-;;     (is (string? (:access-token access-token)))
-;;     (is (string? (:expires access-token)))))
+(deftest test-user-info
+  (user-info
+   (fn [request]
+     (is (= "https://www.googleapis.com/oauth2/v1/userinfo" (:url request)))
+     (is (= "https://www.googleapis.com/oauth2/v1/userinfo" (:url request))))))
+
+(deftest test-oauth-access-token
+  (with-redefs
+    [v2/oauth-access-token
+     (fn [url client-id client-secret code redirect-uri]
+       (is (= *oauth-access-token-url* url))
+       (is (= google-client-id client-id))
+       (is (= google-client-secret client-secret))
+       (is (= google-code code))
+       (is (= google-redirect-uri redirect-uri)))]
+    (oauth-access-token
+     google-client-id
+     google-client-secret
+     google-code
+     google-redirect-uri)))
 
 (deftest test-oauth-authorization-url
   (is (= (str "https://accounts.google.com/o/oauth2/auth?"
@@ -50,9 +61,15 @@
     (oauth-authorize google-client-id "http://example.com")))
 
 (comment
-  (println (oauth-authorization-url google-client-id google-redirect-uri))
-  (oauth-access-token
-   google-client-id
-   google-client-secret
-   "kACAH-1Ng1V86WD8FyM4A34YtS7GgDXIOUQRPoI1TTZVr36Y0MFkOIpWhpCvf9tiAUwSRcVRWBpaAhekzMXm_xJYJeO-bOixaAXN7Mlfuzom1VV4hGc2c2_upE"
-   google-redirect-uri))
+  (println (oauth-authorization-url google-client-id google-redirect-uri :scope (:email scopes)))
+  (def google-access-token nil)
+  (alter-var-root
+   #'google-access-token
+   (constantly
+    (oauth-access-token
+     google-client-id
+     google-client-secret
+     "kACAH-1Ng1B56xUzDAuVeEqVNe51EEqaQk7r9OfXrHIkivA9NPkGmohr6UQsDxHUI1ZEewjRx6I3h-yVZlY7qh0vxSoO-oAjPr7cf0nCap8ghcjCjyiQCVUijw"
+     google-redirect-uri)))
+  (user-info (oauth-client (:access-token google-access-token)))
+  )

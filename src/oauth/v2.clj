@@ -14,7 +14,7 @@
   (request
    {:method :post
     :url url
-    :query-params
+    :form-params
     {"client_id" client-id
      "client_secret" client-secret
      "code" code
