@@ -1,13 +1,12 @@
 (ns oauth.v1
   (:refer-clojure :exclude [replace])
   (:require [clj-http.client :refer [wrap-request wrap-url]]
-            [clj-http.core :refer [request]]
             [clj-http.util :refer [base64-encode]]
             [clojure.java.browse :refer [browse-url]]
             [clojure.string :refer [join replace]]
             [inflections.transform :refer [transform-keys]]
             [oauth.util :as util]
-            [oauth.io :refer [wrap-output-coercion wrap-meta-body]]))
+            [oauth.io :refer [request]]))
 
 (def ^:dynamic *oauth-signature-method* "HMAC-SHA1")
 
@@ -109,14 +108,11 @@
   "Returns an OAuth consumer HTTP client."
   [& {:as oauth-defaults}]
   (-> request
-      (wrap-request)
       (util/wrap-content-type util/x-www-form-urlencoded)
       (wrap-oauth-authorization)
       (wrap-oauth-signature)
       (wrap-url)
-      (wrap-oauth-defaults oauth-defaults)
-      (wrap-output-coercion)
-      (wrap-meta-body)))
+      (wrap-oauth-defaults oauth-defaults)))
 
 (defn oauth-access-token
   "Obtain the OAuth access token."
@@ -125,8 +121,7 @@
         :oauth-consumer-key oauth-consumer-key
         :oauth-token oauth-token
         :oauth-verifier oauth-verifier)
-       {:method :post :url url})
-      util/parse-body))
+       {:method :post :url url})))
 
 (defn oauth-request-token
   "Obtain the OAuth request token to request user authorization."
@@ -134,8 +129,7 @@
   (-> ((make-consumer
         :oauth-consumer-key oauth-consumer-key
         :oauth-consumer-secret oauth-consumer-secret)
-       {:method :post :url url})
-      util/parse-body))
+       {:method :post :url url})))
 
 (defn oauth-client
   "Returns a HTTP client for version 1 of the OAuth protocol."

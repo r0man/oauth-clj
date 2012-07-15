@@ -1,9 +1,9 @@
 (ns oauth.v2
-  (:require [clj-http.client :refer [request wrap-request]]
+  (:require [clj-http.client :refer [wrap-request]]
             [clj-http.core :as core]
             [clojure.java.browse :refer [browse-url]]
             [oauth.util :refer [format-query-params parse-body wrap-content-type wrap-decode-response x-www-form-urlencoded]]
-            [oauth.io :refer [wrap-output-coercion wrap-meta-body]]))
+            [oauth.io :refer [request]]))
 
 (defn- update-access-token [request access-token]
   (assoc-in request [:query-params "access_token"] access-token))
@@ -11,14 +11,15 @@
 (defn oauth-access-token
   "Obtain the OAuth access token."
   [url client-id client-secret code redirect-uri & [grant-type]]
-  (-> {:method :post :url url
-       :query-params
-       {"client_id" client-id
-        "client_secret" client-secret
-        "code" code
-        "redirect_uri" redirect-uri
-        "grant_type" (or grant-type "authorization_code")}}
-      request :body parse-body))
+  (request
+   {:method :post
+    :url url
+    :query-params
+    {"client_id" client-id
+     "client_secret" client-secret
+     "code" code
+     "redirect_uri" redirect-uri
+     "grant_type" (or grant-type "authorization_code")}}))
 
 (defn oauth-authorization-url
   "Returns the OAuth authorization url."
@@ -41,9 +42,6 @@
 (defn oauth-client
   "Returns a HTTP client for version 2 of the OAuth protocol."
   [access-token]
-  (-> core/request
-      (wrap-request)
+  (-> request
       (wrap-content-type x-www-form-urlencoded)
-      (wrap-oauth-access-token access-token)
-      (wrap-output-coercion)
-      (wrap-meta-body)))
+      (wrap-oauth-access-token access-token)))

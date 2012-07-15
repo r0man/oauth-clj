@@ -29,11 +29,8 @@
          (oauth-authorization-url *oauth-authorization-url* facebook-client-id facebook-redirect-uri :scope "email,read_stream"))))
 
 (deftest test-oauth-authorize
-  (let [url *oauth-authorization-url*
-        client-id facebook-client-id
-        redirect-uri facebook-redirect-uri]
-    (with-redefs [browse-url (fn [target] (is (= (oauth-authorization-url url client-id redirect-uri) target)))]
-      (oauth-authorize url client-id redirect-uri))))
+  (with-redefs [browse-url #(is (= (oauth-authorization-url *oauth-authorization-url* facebook-client-id facebook-redirect-uri) %1))]
+    (oauth-authorize *oauth-authorization-url* facebook-client-id facebook-redirect-uri)))
 
 (deftest test-oauth-client
   (is (fn? (oauth-client facebook-access-token))))

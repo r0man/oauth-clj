@@ -1,6 +1,8 @@
 (ns oauth.io
   (:refer-clojure :exclude [replace])
-  (:require [clojure.data.json :refer [json-str read-json]]
+  (:require [clj-http.client :refer [wrap-request]]
+            [clj-http.core :as core]
+            [clojure.data.json :refer [json-str read-json]]
             [clojure.string :refer [blank? replace]]
             [inflections.core :refer [hyphenize]]
             [oauth.util :refer [parse-body]]))
@@ -9,12 +11,16 @@
   "Returns the value of the Content-Type header of `request`."
   [request]
   (let [content-type (get (:headers request) "content-type")]
+    ;; (println content-type)
     (if-not (blank?  content-type)
       (keyword (replace content-type #";.*" "")))))
 
-(defn deserialize-json [{:keys [body] :as response}]
+(defn update-body
+  "Update the :body of `response` by applying `update-fn` to it, if
+  it's a string."
+  [{:keys [body] :as response} update-fn]
   (if (string? body)
-    (update-in response [:body] read-json)
+    (update-in response [:body] update-fn)
     response))
 
 (defmulti deserialize
@@ -25,22 +31,22 @@
   [response] response)
 
 (defmethod deserialize :application/clojure
-  [{:keys [body] :as response}]
-  (if (string? body)
-    (update-in response [:body] read-string)
-    response))
+  [response] (update-body response read-string))
 
 (defmethod deserialize :application/json
-  [response] (deserialize-json response))
+  [response] (update-body response read-json))
+
+(defmethod deserialize :text/html
+  [response] (update-body response parse-body))
+
+(defmethod deserialize :text/plain
+  [response] (update-body response parse-body))
 
 (defmethod deserialize :application/x-www-form-urlencoded
-  [{:keys [body] :as response}]
-  (if (string? body)
-    (update-in response [:body] parse-body)
-    response))
+  [response] (update-body response parse-body))
 
 (defmethod deserialize :text/javascript
-  [response] (deserialize-json response))
+  [response] (update-body response read-json))
 
 (defmulti serialize
   "Serialize the body of `response` according to the Content-Type header."
@@ -63,7 +69,7 @@
         (assoc-in [:headers "content-type"] "application/json"))
     request))
 
-(defn wrap-meta-body [handler]
+(defn wrap-meta-response [handler]
   (fn [request]
     (let [{:keys [body] :as response} (handler request)]
       (if (instance? clojure.lang.IMeta body)
@@ -79,3 +85,10 @@
     (-> (handler request)
         (deserialize)
         (update-in [:body] hyphenize))))
+
+(def request
+  (-> #'core/request
+      (wrap-request)
+      (wrap-output-coercion)
+      (wrap-input-coercion)
+      (wrap-meta-response)))

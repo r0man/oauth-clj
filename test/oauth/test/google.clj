@@ -17,7 +17,7 @@
   "https://localhost/oauth2callback")
 
 (def google-code
-  "kACAH-1Ng2z2w-V3VcPKIBR4pX6_XMngOvGWs4Cz6JKC36N-QU5-vvM0-AxwLgg83qUGJbKXEWIh-jCRlcXJAkb9-1Xd4oaNbRA5FinzLLtbLoAEXiJM-BPJWE")
+  "kACAH-1Ng0uD2HWBWbVKhqSXoXNda8_geLaOhmm8S32pG_-isiyg2E_XMKwthn2f4oqvkl9mDaK-IvVfG85KTb4mlTlEDI_ccJ3JTVn5JKC0rjHjXkXUmN1OyA")
 
 ;; (deftest test-oauth-access-token
 ;;   (let [access-token
@@ -46,7 +46,13 @@
          (oauth-authorization-url google-client-id google-redirect-uri :scope (:email scopes)))))
 
 (deftest test-oauth-authorize
-  (let [client-id google-client-id
-        redirect-uri "http://example.com"]
-    (with-redefs [browse-url (fn [target] (is (= (oauth-authorization-url client-id redirect-uri) target)))]
-      (oauth-authorize client-id redirect-uri))))
+  (with-redefs [browse-url (fn [target] (is (= (oauth-authorization-url google-client-id "http://example.com") target)))]
+    (oauth-authorize google-client-id "http://example.com")))
+
+(comment
+  (println (oauth-authorization-url google-client-id google-redirect-uri))
+  (oauth-access-token
+   google-client-id
+   google-client-secret
+   "kACAH-1Ng1V86WD8FyM4A34YtS7GgDXIOUQRPoI1TTZVr36Y0MFkOIpWhpCvf9tiAUwSRcVRWBpaAhekzMXm_xJYJeO-bOixaAXN7Mlfuzom1VV4hGc2c2_upE"
+   google-redirect-uri))

@@ -1,7 +1,7 @@
 (ns oauth.google
-  (:require [clj-http.client :refer [request]]
-            [clojure.java.browse :refer [browse-url]]
+  (:require [clojure.java.browse :refer [browse-url]]
             [oauth.v2 :as v2]
+            [oauth.io :refer [request]]
             [oauth.util :refer [parse-body]]))
 
 (def scopes
@@ -32,15 +32,15 @@
 (defn oauth-access-token
   "Obtain the OAuth access token from Google."
   [client-id client-secret code redirect-uri & [grant-type]]
-  (-> {:method :post
-       :url *oauth-access-token-url*
-       :form-params
-       {"client_id" client-id
-        "client_secret" client-secret
-        "code" code
-        "redirect_uri" redirect-uri
-        "grant_type" (or grant-type "authorization_code")}}
-      request :body))
+  (request
+   {:method :post
+    :url *oauth-access-token-url*
+    :form-params
+    {"client_id" client-id
+     "client_secret" client-secret
+     "code" code
+     "redirect_uri" redirect-uri
+     "grant_type" (or grant-type "authorization_code")}}))
 
 (defn oauth-authorize
   "Sends the user to Google's authorization endpoint."
