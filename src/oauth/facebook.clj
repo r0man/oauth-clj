@@ -1,6 +1,6 @@
 (ns oauth.facebook
-  (:require [oauth.v2 :as v2])
-  (:use oauth.util))
+  (:require [clojure.java.browse :refer [browse-url]]
+            [oauth.v2 :as v2]))
 
 (def ^:dynamic *oauth-access-token-url*
   "https://graph.facebook.com/oauth/access_token")
@@ -21,7 +21,7 @@
 (defn oauth-authorize
   "Sends the user to Facebook's authorization endpoint."
   [client-id redirect-uri & options]
-  (apply v2/oauth-authorize *oauth-authorization-url* client-id redirect-uri options))
+  (browse-url (apply oauth-authorization-url client-id redirect-uri options)))
 
 (defn oauth-client
   "Returns a Facebook OAuth client."

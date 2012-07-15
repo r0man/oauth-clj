@@ -1,6 +1,5 @@
 (ns oauth.twitter
-  (:require [oauth.v1 :as v1])
-  (:use oauth.util))
+  (:require [oauth.v1 :as v1]))
 
 (def ^:dynamic *oauth-access-token-url*
   "https://api.twitter.com/oauth/access_token")

@@ -1,12 +1,12 @@
 (ns oauth.v1
-  (:refer-clojure :exclude (replace))
-  (:use [clj-http.client :only (wrap-request wrap-url)]
-        [clj-http.core :only (request)]
-        [clj-http.util :only (base64-encode)]
-        [clojure.java.browse :only (browse-url)]
-        [clojure.string :only (join replace)]
-        [inflections.transform :only (transform-keys)]
-        oauth.util))
+  (:refer-clojure :exclude [replace])
+  (:require [clj-http.client :refer [wrap-request wrap-url]]
+            [clj-http.core :refer [request]]
+            [clj-http.util :refer [base64-encode]]
+            [clojure.java.browse :refer [browse-url]]
+            [clojure.string :refer [join replace]]
+            [inflections.transform :refer [transform-keys]]
+            [oauth.util :as util]))
 
 (def ^:dynamic *oauth-signature-method* "HMAC-SHA1")
 
@@ -15,9 +15,9 @@
 (defn oauth-authorization-header
   "Returns the OAuth header of `request`."
   [request]
-  (-> (merge (oauth-params (dissoc request :oauth-consumer-secret :oauth-token-secret))
-             (oauth-params (:query-params request)))
-      (format-authorization)))
+  (-> (merge (util/oauth-params (dissoc request :oauth-consumer-secret :oauth-token-secret))
+             (util/oauth-params (:query-params request)))
+      (util/format-authorization)))
 
 (defn oauth-authorize
   "Send the user to the authorization url via `browse-url`."
@@ -26,21 +26,21 @@
 (defn oauth-signature-parameters
   "Returns the OAuth signature parameters from `request`."
   [request]
-  (-> (merge (parse-body-params request)
-             (oauth-params (dissoc request :oauth-consumer-secret :oauth-token-secret))
+  (-> (merge (util/parse-body-params request)
+             (util/oauth-params (dissoc request :oauth-consumer-secret :oauth-token-secret))
              (transform-keys (:query-params request) name))
-      (compact-map)))
+      (util/compact-map)))
 
 (defn oauth-parameter-string
   "Returns the OAuth parameter string from `request`."
-  [request] (format-params (oauth-signature-parameters request)))
+  [request] (util/format-params (oauth-signature-parameters request)))
 
 (defn oauth-signature-base
   "Returns the OAuth signature base string from `request`."
   [request]
-  (->> [(format-http-method request)
-        (percent-encode (format-base-url request))
-        (percent-encode (oauth-parameter-string request))]
+  (->> [(util/format-http-method request)
+        (util/percent-encode (util/format-base-url request))
+        (util/percent-encode (oauth-parameter-string request))]
        (join "&")))
 
 (defn oauth-signing-key
@@ -50,17 +50,17 @@
 (defn oauth-request-signature
   "Calculates the OAuth signature from `request`."
   [request & [consumer-secret token-secret]]
-  (-> (hmac "HmacSHA1"
-            (oauth-signature-base request)
-            (oauth-signing-key
-             (or consumer-secret (:oauth-consumer-secret request))
-             (or token-secret (:oauth-token-secret request))))
+  (-> (util/hmac "HmacSHA1"
+                 (oauth-signature-base request)
+                 (oauth-signing-key
+                  (or consumer-secret (:oauth-consumer-secret request))
+                  (or token-secret (:oauth-token-secret request))))
       (base64-encode)))
 
 (defn oauth-nonce
   "Returns a random OAuth nonce. The OAuth nonce is a unique token an
   application should generate for each unique request."
-  [] (replace (random-base64 32) #"(?i)[^a-z0-9]" ""))
+  [] (replace (util/random-base64 32) #"(?i)[^a-z0-9]" ""))
 
 (defn oauth-timestamp
   "Returns the current OAuth timestamp. The current time in seconds
@@ -109,12 +109,12 @@
   [& {:as oauth-defaults}]
   (-> request
       (wrap-request)
-      (wrap-content-type x-www-form-urlencoded)
+      (util/wrap-content-type util/x-www-form-urlencoded)
       (wrap-oauth-authorization)
       (wrap-oauth-signature)
       (wrap-url)
       (wrap-oauth-defaults oauth-defaults)
-      (wrap-decode-response)))
+      (util/wrap-decode-response)))
 
 (defn oauth-access-token
   "Obtain the OAuth access token."
@@ -124,7 +124,7 @@
         :oauth-token oauth-token
         :oauth-verifier oauth-verifier)
        {:method :post :url url})
-      parse-body))
+      util/parse-body))
 
 (defn oauth-request-token
   "Obtain the OAuth request token to request user authorization."
@@ -133,7 +133,7 @@
         :oauth-consumer-key oauth-consumer-key
         :oauth-consumer-secret oauth-consumer-secret)
        {:method :post :url url})
-      parse-body))
+      util/parse-body))
 
 (defn oauth-client
   "Returns a HTTP client for version 1 of the OAuth protocol."

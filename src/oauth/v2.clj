@@ -1,8 +1,8 @@
 (ns oauth.v2
-  (:require [clj-http.core :as core])
-  (:use [clj-http.client :only (request wrap-request)]
-        [clojure.java.browse :only (browse-url)]
-        oauth.util))
+  (:require [clj-http.client :refer [request wrap-request]]
+            [clj-http.core :as core]
+            [clojure.java.browse :refer [browse-url]]
+            [oauth.util :refer [format-query-params parse-body wrap-content-type wrap-decode-response x-www-form-urlencoded]]))
 
 (defn- update-access-token [request access-token]
   (assoc-in request [:query-params "access_token"] access-token))

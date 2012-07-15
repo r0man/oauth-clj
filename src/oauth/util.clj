@@ -1,15 +1,15 @@
 (ns oauth.util
-  (:require [clj-http.client :as http])
-  (:refer-clojure :exclude (replace))
+  (:refer-clojure :exclude [replace])
+  (:require [clj-http.client :as http]
+            [clj-http.util :refer [base64-encode url-encode url-decode]]
+            [clojure.data.json :refer [read-json]]
+            [clojure.string :refer [blank? join replace split upper-case]]
+            [inflections.core :refer [hyphenize underscore]]
+            [inflections.transform :refer [transform-keys transform-values]])
   (:import java.security.SecureRandom
            javax.crypto.Mac
            javax.crypto.spec.SecretKeySpec
-           org.apache.http.entity.StringEntity)
-  (:use [clj-http.util :only (base64-encode url-encode url-decode)]
-        [clojure.data.json :only (read-json)]
-        [clojure.string :only (blank? join replace split upper-case)]
-        [inflections.core :only (hyphenize underscore)]
-        [inflections.transform :only (transform-keys transform-values)]))
+           org.apache.http.entity.StringEntity))
 
 (def x-www-form-urlencoded "application/x-www-form-urlencoded")
 
