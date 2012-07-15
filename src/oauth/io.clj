@@ -11,17 +11,22 @@
   "Returns the value of the Content-Type header of `request`."
   [request]
   (let [content-type (get (:headers request) "content-type")]
-    ;; (println content-type)
     (if-not (blank?  content-type)
       (keyword (replace content-type #";.*" "")))))
 
-(defn update-body
+(defn deserialize-body
   "Update the :body of `response` by applying `update-fn` to it, if
   it's a string."
   [{:keys [body] :as response} update-fn]
   (if (string? body)
     (update-in response [:body] update-fn)
     response))
+
+(defn serialize-body [request content-type update-fn]
+  (if (:body request)
+    (-> (update-in request [:body] update-fn)
+        (assoc-in [:headers "content-type"] content-type))
+    request))
 
 (defmulti deserialize
   "Deserialize the body of `response` according to the Content-Type header."
@@ -31,22 +36,22 @@
   [response] response)
 
 (defmethod deserialize :application/clojure
-  [response] (update-body response read-string))
+  [response] (deserialize-body response read-string))
 
 (defmethod deserialize :application/json
-  [response] (update-body response read-json))
+  [response] (deserialize-body response read-json))
 
 (defmethod deserialize :text/html
-  [response] (update-body response parse-body))
+  [response] (deserialize-body response parse-body))
 
 (defmethod deserialize :text/plain
-  [response] (update-body response parse-body))
+  [response] (deserialize-body response parse-body))
 
 (defmethod deserialize :application/x-www-form-urlencoded
-  [response] (update-body response parse-body))
+  [response] (deserialize-body response parse-body))
 
 (defmethod deserialize :text/javascript
-  [response] (update-body response read-json))
+  [response] (deserialize-body response read-json))
 
 (defmulti serialize
   "Serialize the body of `response` according to the Content-Type header."
@@ -56,18 +61,11 @@
   [request] request)
 
 (defmethod serialize :application/clojure
-  [{:keys [body] :as request}]
-  (if body
-    (-> (update-in request [:body] prn-str)
-        (assoc-in [:headers "content-type"] "application/clojure"))
-    request))
+  [request] (serialize-body request "application/clojure" prn-str))
 
 (defmethod serialize :application/json
   [{:keys [body] :as request}]
-  (if body
-    (-> (update-in request [:body] json-str)
-        (assoc-in [:headers "content-type"] "application/json"))
-    request))
+  [request] (serialize-body request "application/json" json-str))
 
 (defn wrap-meta-response [handler]
   (fn [request]
@@ -89,6 +87,6 @@
 (def request
   (-> #'core/request
       (wrap-request)
-      (wrap-output-coercion)
       (wrap-input-coercion)
+      (wrap-output-coercion)
       (wrap-meta-response)))
