@@ -2,7 +2,8 @@
   (:require [clj-http.client :refer [request wrap-request]]
             [clj-http.core :as core]
             [clojure.java.browse :refer [browse-url]]
-            [oauth.util :refer [format-query-params parse-body wrap-content-type wrap-decode-response x-www-form-urlencoded]]))
+            [oauth.util :refer [format-query-params parse-body wrap-content-type wrap-decode-response x-www-form-urlencoded]]
+            [oauth.io :refer [wrap-output-coercion wrap-meta-body]]))
 
 (defn- update-access-token [request access-token]
   (assoc-in request [:query-params "access_token"] access-token))
@@ -44,4 +45,5 @@
       (wrap-request)
       (wrap-content-type x-www-form-urlencoded)
       (wrap-oauth-access-token access-token)
-      (wrap-decode-response)))
+      (wrap-output-coercion)
+      (wrap-meta-body)))

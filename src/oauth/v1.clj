@@ -6,7 +6,8 @@
             [clojure.java.browse :refer [browse-url]]
             [clojure.string :refer [join replace]]
             [inflections.transform :refer [transform-keys]]
-            [oauth.util :as util]))
+            [oauth.util :as util]
+            [oauth.io :refer [wrap-output-coercion wrap-meta-body]]))
 
 (def ^:dynamic *oauth-signature-method* "HMAC-SHA1")
 
@@ -114,7 +115,8 @@
       (wrap-oauth-signature)
       (wrap-url)
       (wrap-oauth-defaults oauth-defaults)
-      (util/wrap-decode-response)))
+      (wrap-output-coercion)
+      (wrap-meta-body)))
 
 (defn oauth-access-token
   "Obtain the OAuth access token."
