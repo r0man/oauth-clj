@@ -41,17 +41,17 @@
 (defmethod deserialize :application/json
   [response] (deserialize-body response read-json))
 
-(defmethod deserialize :text/html
-  [response] (deserialize-body response parse-body))
-
-(defmethod deserialize :text/plain
-  [response] (deserialize-body response parse-body))
-
 (defmethod deserialize :application/x-www-form-urlencoded
+  [response] (deserialize-body response parse-body))
+
+(defmethod deserialize :text/html
   [response] (deserialize-body response parse-body))
 
 (defmethod deserialize :text/javascript
   [response] (deserialize-body response read-json))
+
+(defmethod deserialize :text/plain
+  [response] (deserialize-body response parse-body))
 
 (defmulti serialize
   "Serialize the body of `response` according to the Content-Type header."
