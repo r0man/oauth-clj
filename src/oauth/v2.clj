@@ -9,13 +9,14 @@
 
 (defn oauth-access-token
   "Obtain the OAuth access token."
-  [url client-id client-secret code redirect-uri]
+  [url client-id client-secret code redirect-uri & [grant-type]]
   (-> {:method :post :url url
        :query-params
        {"client_id" client-id
         "client_secret" client-secret
         "code" code
-        "redirect_uri" redirect-uri}}
+        "redirect_uri" redirect-uri
+        "grant_type" (or grant-type "authorization_code")}}
       request :body parse-body))
 
 (defn oauth-authorization-url
