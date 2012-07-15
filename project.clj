@@ -2,7 +2,7 @@
   :description "Clojure OAuth library."
   :min-lein-version "2.0.0"
   :dependencies [[clj-http "0.4.0"]
-                 [inflections "0.6.5"]
+                 [inflections "0.7.1-SNAPSHOT"]
                  [org.clojure/clojure "1.4.0"]
                  [org.clojure/data.json "0.1.2"]
                  [org.clojure/tools.logging "0.2.3"]]
