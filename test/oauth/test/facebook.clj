@@ -50,7 +50,7 @@
 (deftest test-oauth-authorize
   (let [client-id facebook-client-id
         redirect-uri "http://example.com"]
-    (with-redefs [browse-url (fn [target] (is (= (v2/oauth-authorization-url *oauth-authorization-url* client-id redirect-uri) target)))]
+    (with-redefs [browse-url (fn [target] (is (= (oauth-authorization-url client-id redirect-uri) target)))]
       (oauth-authorize client-id redirect-uri))))
 
 (deftest test-oauth-client
