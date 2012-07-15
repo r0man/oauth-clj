@@ -64,7 +64,6 @@
   [request] (serialize-body request "application/clojure" prn-str))
 
 (defmethod serialize :application/json
-  [{:keys [body] :as request}]
   [request] (serialize-body request "application/json" json-str))
 
 (defn wrap-meta-response [handler]
