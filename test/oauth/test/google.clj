@@ -46,7 +46,8 @@
               "client_id=235540178849.apps.googleusercontent.com&"
               "redirect_uri=https%3A%2F%2Flocalhost%2Foauth2callback&"
               "response_type=code&"
-              "scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email")
+              "scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+"
+              "https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email")
          (oauth-authorization-url google-client-id google-redirect-uri)))
   (is (= (str "https://accounts.google.com/o/oauth2/auth?"
               "access_type=offline&"
@@ -54,11 +55,17 @@
               "redirect_uri=https%3A%2F%2Flocalhost%2Foauth2callback&"
               "response_type=code&"
               "scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email")
-         (oauth-authorization-url google-client-id google-redirect-uri :scope (:email scopes)))))
+         (oauth-authorization-url google-client-id google-redirect-uri :scope (scopes :email)))))
 
 (deftest test-oauth-authorize
   (with-redefs [browse-url (fn [target] (is (= (oauth-authorization-url google-client-id "http://example.com") target)))]
     (oauth-authorize google-client-id "http://example.com")))
+
+(deftest test-scopes
+  (is (= "https://www.googleapis.com/auth/userinfo.email" (scopes :email)))
+  (is (= (str "https://www.googleapis.com/auth/userinfo.email "
+              "https://www.googleapis.com/auth/userinfo.profile")
+         (scopes :email :profile))))
 
 (comment
   (println (oauth-authorization-url google-client-id google-redirect-uri :scope (:email scopes)))
