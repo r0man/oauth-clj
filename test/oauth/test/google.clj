@@ -8,16 +8,16 @@
   "")
 
 (def google-client-id
-  "235540178849.apps.googleusercontent.com")
+  "173176451919.apps.googleusercontent.com")
 
 (def google-client-secret
-  "WmmnpwWv7NEptBuKymPzPPLF")
+  "rd6_3jrt7dXgF8Ww_eJdxdrp")
 
 (def google-redirect-uri
   "https://localhost/oauth2callback")
 
 (def google-code
-  "kACAH-1Ng0uD2HWBWbVKhqSXoXNda8_geLaOhmm8S32pG_-isiyg2E_XMKwthn2f4oqvkl9mDaK-IvVfG85KTb4mlTlEDI_ccJ3JTVn5JKC0rjHjXkXUmN1OyA")
+  "4/ZgIhztcK_dX3ULsXXBzlGl-f-RX0.MlILSu3vraUdOl05ti8ZT3a5grtycgI")
 
 (deftest test-user-info
   (user-info
@@ -68,7 +68,7 @@
          (scopes :email :profile))))
 
 (comment
-  (println (oauth-authorization-url google-client-id google-redirect-uri :scope (:email scopes)))
+  (println (oauth-authorization-url google-client-id google-redirect-uri :scope (scopes :email)))
   (def google-access-token nil)
   (alter-var-root
    #'google-access-token
@@ -76,7 +76,6 @@
     (oauth-access-token
      google-client-id
      google-client-secret
-     "kACAH-1Ng1B56xUzDAuVeEqVNe51EEqaQk7r9OfXrHIkivA9NPkGmohr6UQsDxHUI1ZEewjRx6I3h-yVZlY7qh0vxSoO-oAjPr7cf0nCap8ghcjCjyiQCVUijw"
+     google-code
      google-redirect-uri)))
-  (user-info (oauth-client (:access-token google-access-token)))
-  )
+  (user-info (oauth-client (:access-token google-access-token))))
