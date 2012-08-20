@@ -43,7 +43,7 @@
 (deftest test-oauth-authorization-url
   (is (= (str "https://accounts.google.com/o/oauth2/auth?"
               "access_type=offline&"
-              "client_id=235540178849.apps.googleusercontent.com&"
+              "client_id=173176451919.apps.googleusercontent.com&"
               "redirect_uri=https%3A%2F%2Flocalhost%2Foauth2callback&"
               "response_type=code&"
               "scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+"
@@ -51,7 +51,7 @@
          (oauth-authorization-url google-client-id google-redirect-uri)))
   (is (= (str "https://accounts.google.com/o/oauth2/auth?"
               "access_type=offline&"
-              "client_id=235540178849.apps.googleusercontent.com&"
+              "client_id=173176451919.apps.googleusercontent.com&"
               "redirect_uri=https%3A%2F%2Flocalhost%2Foauth2callback&"
               "response_type=code&"
               "scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email")
