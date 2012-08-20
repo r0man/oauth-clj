@@ -36,7 +36,9 @@
   [response] response)
 
 (defmethod deserialize :application/clojure
-  [response] (deserialize-body response read-string))
+  [response]
+  (binding [*read-eval* false]
+    (deserialize-body response read-string)))
 
 (defmethod deserialize :application/json
   [response] (deserialize-body response read-json))
