@@ -1,6 +1,7 @@
 (ns oauth.test.google
   (:require [oauth.v2 :as v2])
   (:use [clojure.java.browse :only (browse-url)]
+        [clj-http.client :only [parse-url]]
         clojure.test
         oauth.google))
 
@@ -41,21 +42,21 @@
      google-redirect-uri)))
 
 (deftest test-oauth-authorization-url
-  (is (= (str "https://accounts.google.com/o/oauth2/auth?"
-              "access_type=offline&"
-              "client_id=235540178849.apps.googleusercontent.com&"
-              "redirect_uri=https%3A%2F%2Flocalhost%2Foauth2callback&"
-              "response_type=code&"
-              "scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+"
-              "https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email")
-         (oauth-authorization-url google-client-id google-redirect-uri)))
-  (is (= (str "https://accounts.google.com/o/oauth2/auth?"
-              "access_type=offline&"
-              "client_id=235540178849.apps.googleusercontent.com&"
-              "redirect_uri=https%3A%2F%2Flocalhost%2Foauth2callback&"
-              "response_type=code&"
-              "scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email")
-         (oauth-authorization-url google-client-id google-redirect-uri :scope (scopes :email)))))
+  (let [url (parse-url (oauth-authorization-url google-client-id google-redirect-uri))]
+    (is (= :https (:scheme url)))
+    (is (= "accounts.google.com" (:server-name url)))
+    (is (= "/o/oauth2/auth" (:uri url)))
+    (is (= (str "access_type=offline&client_id=173176451919.apps.googleusercontent.com&"
+                "redirect_uri=https%3A%2F%2Flocalhost%2Foauth2callback&response_type=code&"
+                "scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email")
+           (:query-string url))))
+  (let [url (parse-url (oauth-authorization-url google-client-id google-redirect-uri :scope (scopes :email)))]
+    (is (= :https (:scheme url)))
+    (is (= "accounts.google.com" (:server-name url)))
+    (is (= "/o/oauth2/auth" (:uri url)))
+    (is (= (str "access_type=offline&client_id=173176451919.apps.googleusercontent.com&"
+                "redirect_uri=https%3A%2F%2Flocalhost%2Foauth2callback&response_type=code&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email")
+           (:query-string url)))))
 
 (deftest test-oauth-authorize
   (with-redefs [browse-url (fn [target] (is (= (oauth-authorization-url google-client-id "http://example.com") target)))]
