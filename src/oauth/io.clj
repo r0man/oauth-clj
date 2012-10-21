@@ -2,7 +2,7 @@
   (:refer-clojure :exclude [replace])
   (:require [clj-http.client :refer [wrap-request]]
             [clj-http.core :as core]
-            [clojure.data.json :refer [json-str read-json]]
+            [clojure.data.json :refer [write-str read-str]]
             [clojure.string :refer [blank? replace]]
             [inflections.core :refer [hyphenize]]
             [oauth.util :refer [parse-body]]))
@@ -39,7 +39,7 @@
   [response] (deserialize-body response read-string))
 
 (defmethod deserialize :application/json
-  [response] (deserialize-body response read-json))
+  [response] (deserialize-body response #(read-str %1 :key-fn keyword)))
 
 (defmethod deserialize :application/x-www-form-urlencoded
   [response] (deserialize-body response parse-body))
@@ -48,7 +48,7 @@
   [response] (deserialize-body response parse-body))
 
 (defmethod deserialize :text/javascript
-  [response] (deserialize-body response read-json))
+  [response] (deserialize-body response #(read-str %1 :key-fn keyword)))
 
 (defmethod deserialize :text/plain
   [response] (deserialize-body response parse-body))
@@ -64,7 +64,7 @@
   [request] (serialize-body request "application/clojure" prn-str))
 
 (defmethod serialize :application/json
-  [request] (serialize-body request "application/json" json-str))
+  [request] (serialize-body request "application/json" write-str))
 
 (defn wrap-meta-response [handler]
   (fn [request]
@@ -79,9 +79,11 @@
 
 (defn wrap-output-coercion [handler]
   (fn [request]
-    (-> (handler request)
-        (deserialize)
-        (update-in [:body] hyphenize))))
+    (if (= :stream (:as request))
+      (handler request)
+      (-> (handler request)
+          (deserialize)
+          (update-in [:body] hyphenize)))))
 
 (def request
   (-> #'core/request

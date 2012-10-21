@@ -1,5 +1,5 @@
 (ns oauth.test.io
-  (:use [clojure.data.json :only (json-str read-json)]
+  (:use [clojure.data.json :only (write-str read-str)]
         clojure.test
         oauth.io))
 
@@ -18,7 +18,7 @@
   (let [body {:a 1 :b 2}]
     (let [request (deserialize {:body (prn-str body) :headers {"content-type" "application/clojure"}})]
       (is (= body (:body request))))
-    (let [request (deserialize {:body (json-str body) :headers {"content-type" "application/json"}})]
+    (let [request (deserialize {:body (write-str body) :headers {"content-type" "application/json"}})]
       (is (= body (:body request))))))
 
 (deftest test-serialize
@@ -30,4 +30,4 @@
       (is (= (prn-str body) (:body request))))
     (let [request (serialize {:body body :headers {"content-type" "application/json"}})]
       (is (= :application/json (content-type request)))
-      (is (= (json-str body) (:body request))))))
+      (is (= (write-str body) (:body request))))))
