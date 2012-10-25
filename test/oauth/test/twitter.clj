@@ -72,9 +72,27 @@
     (let [response (meta user)]
       (is (= 200 (:status response))))))
 
-(deftest test-update-status
+(deftest test-update-status-body
   (let [status (format "Test %s" (java.util.Date.))
         body (str "status=" status)
         response (twitter-client {:method :post :url "https://api.twitter.com/1/statuses/update.json" :body body})]
+    (is (string? (:id-str response)))
+    (is (= status (:text response)))))
+
+(deftest test-update-status-query-params
+  (let [status (format "Test %s" (java.util.Date.))
+        response (twitter-client
+                  {:method :post
+                   :url "https://api.twitter.com/1/statuses/update.json"
+                   :query-params {:status status}})]
+    (is (string? (:id-str response)))
+    (is (= status (:text response)))))
+
+(deftest test-update-status-form-params
+  (let [status (format "Test %s" (java.util.Date.))
+        response (twitter-client
+                  {:method :post
+                   :url "https://api.twitter.com/1/statuses/update.json"
+                   :form-params {:status status}})]
     (is (string? (:id-str response)))
     (is (= status (:text response)))))

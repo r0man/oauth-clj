@@ -16,7 +16,8 @@
   "Returns the OAuth header of `request`."
   [request]
   (-> (merge (util/oauth-params (dissoc request :oauth-consumer-secret :oauth-token-secret))
-             (util/oauth-params (:query-params request)))
+             (util/oauth-params (merge (:form-params request)
+                                       (:query-params request))))
       (util/format-authorization)))
 
 (defn oauth-authorize
@@ -28,7 +29,10 @@
   [request]
   (-> (merge (util/parse-body-params request)
              (util/oauth-params (dissoc request :oauth-consumer-secret :oauth-token-secret))
-             (transform-keys (:query-params request) name))
+             (transform-keys
+              (merge (:form-params request)
+                     (:query-params request))
+              name))
       (util/compact-map)))
 
 (defn oauth-parameter-string
