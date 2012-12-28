@@ -1,6 +1,9 @@
 (defproject oauth-clj "0.1.2-SNAPSHOT"
   :description "Clojure OAuth library."
+  :url "https://github.com/r0man/oauth-clj"
   :min-lein-version "2.0.0"
+  :license {:name "Eclipse Public License"
+            :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[clj-http "0.6.3"]
                  [inflections "0.7.4"]
                  [org.clojure/clojure "1.4.0"]
