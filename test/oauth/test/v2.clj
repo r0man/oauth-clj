@@ -6,16 +6,16 @@
         clojure.test
         oauth.v2))
 
-(deftest test-oauth-access-token
-  (let [access-token
-        (oauth-access-token
-         *oauth-access-token-url*
-         facebook-client-id
-         facebook-client-secret
-         facebook-code
-         facebook-redirect-uri)]
-    (is (string? (:access-token access-token)))
-    (is (string? (:expires access-token)))))
+;; (deftest test-oauth-access-token
+;;   (let [access-token
+;;         (oauth-access-token
+;;          *oauth-access-token-url*
+;;          facebook-client-id
+;;          facebook-client-secret
+;;          facebook-code
+;;          facebook-redirect-uri)]
+;;     (is (string? (:access-token access-token)))
+;;     (is (string? (:expires access-token)))))
 
 (deftest test-oauth-authorization-url
   (is (= (str "https://www.facebook.com/dialog/oauth?"

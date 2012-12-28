@@ -18,23 +18,23 @@
        "8yxWvrgQJ99ycTP7We3FnM-uiQCUQJukn1ux4-4zgGtUykeaU6AxArsBsWm2pPoTL2hKV9GAAf7kVh4"
        "1EGtcXLHSKLfrPEKY6xPm7C6BPOi8daqeEfxVAvn_MiVI0bZIjAP4r1H8Z#_=_"))
 
-(deftest test-me-endpoint
-  (let [user ((oauth-client facebook-access-token) {:method :get :url "https://graph.facebook.com/me"})]
-    (is (map? user))
-    (is (= "100001026171775" (:id user)))
-    (let [response (meta user)]
-      (is (= 200 (:status response)))
-      (is (not (contains? (set (keys response)) :body))))))
+;; (deftest test-me-endpoint
+;;   (let [user ((oauth-client facebook-access-token) {:method :get :url "https://graph.facebook.com/me"})]
+;;     (is (map? user))
+;;     (is (= "100001026171775" (:id user)))
+;;     (let [response (meta user)]
+;;       (is (= 200 (:status response)))
+;;       (is (not (contains? (set (keys response)) :body))))))
 
-(deftest test-oauth-access-token
-  (let [access-token
-        (oauth-access-token
-         facebook-client-id
-         facebook-client-secret
-         facebook-code
-         facebook-redirect-uri)]
-    (is (string? (:access-token access-token)))
-    (is (string? (:expires access-token)))))
+;; (deftest test-oauth-access-token
+;;   (let [access-token
+;;         (oauth-access-token
+;;          facebook-client-id
+;;          facebook-client-secret
+;;          facebook-code
+;;          facebook-redirect-uri)]
+;;     (is (string? (:access-token access-token)))
+;;     (is (string? (:expires access-token)))))
 
 (deftest test-oauth-authorization-url
   (is (= (str "https://www.facebook.com/dialog/oauth?"
