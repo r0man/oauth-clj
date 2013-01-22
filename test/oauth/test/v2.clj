@@ -35,6 +35,17 @@
 (deftest test-oauth-client
   (is (fn? (oauth-client facebook-access-token))))
 
+(deftest test-wrap-client-id
+  (let [client-id "CLIENT-ID"]
+    ((wrap-client-id
+      #(is (= client-id (get (:query-params %1) "client_id")))
+      client-id)
+     {:request-method :get})
+    ((wrap-client-id
+      #(is (= client-id (get (:form-params %1) "client_id")))
+      client-id)
+     {:request-method :put})))
+
 (deftest test-wrap-oauth-access-token
   ((wrap-oauth-access-token
     #(is (= facebook-access-token (get (:query-params %1) "access_token")))

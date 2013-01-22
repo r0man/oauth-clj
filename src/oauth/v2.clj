@@ -33,6 +33,19 @@
   [url client-id redirect-uri & options]
   (browse-url (apply oauth-authorization-url url client-id redirect-uri options)))
 
+(defn wrap-client-id
+  "Returns a HTTP client that adds the :client-id to the form or query
+  params, depending on the request method.."
+  [client client-id]
+  (fn [{:keys [method request-method] :as request}]
+    (client
+     (assoc-in
+      request
+      (if (= :get (or method request-method))
+        [:query-params "client_id"]
+        [:form-params "client_id"])
+      client-id))))
+
 (defn wrap-oauth-access-token
   "Returns a HTTP client that adds the OAuth `access-token` to `request`."
   [client & [access-token]]
