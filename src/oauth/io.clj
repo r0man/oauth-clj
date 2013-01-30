@@ -2,7 +2,7 @@
   (:refer-clojure :exclude [replace])
   (:require [clj-http.client :refer [wrap-request]]
             [clj-http.core :as core]
-            [clojure.data.json :refer [write-str read-str]]
+            [cheshire.core :as json]
             [clojure.string :refer [blank? replace]]
             [inflections.core :refer [hyphenize]]
             [oauth.util :refer [parse-body]]))
@@ -41,7 +41,7 @@
     (deserialize-body response read-string)))
 
 (defmethod deserialize :application/json
-  [response] (deserialize-body response #(read-str %1 :key-fn keyword)))
+  [response] (deserialize-body response #(json/decode %1 true)))
 
 (defmethod deserialize :application/x-www-form-urlencoded
   [response] (deserialize-body response parse-body))
@@ -50,7 +50,7 @@
   [response] (deserialize-body response parse-body))
 
 (defmethod deserialize :text/javascript
-  [response] (deserialize-body response #(read-str %1 :key-fn keyword)))
+  [response] (deserialize-body response #(json/decode %1 true)))
 
 (defmethod deserialize :text/plain
   [response] (deserialize-body response parse-body))
@@ -66,7 +66,7 @@
   [request] (serialize-body request "application/clojure" prn-str))
 
 (defmethod serialize :application/json
-  [request] (serialize-body request "application/json" write-str))
+  [request] (serialize-body request "application/json" json/encode))
 
 (defn wrap-meta-response [handler]
   (fn [request]

@@ -2,7 +2,7 @@
   (:refer-clojure :exclude [replace])
   (:require [clj-http.client :as http]
             [clj-http.util :refer [base64-encode url-encode url-decode]]
-            [clojure.data.json :refer [read-str]]
+            [cheshire.core :as json]
             [clojure.string :refer [blank? join replace split upper-case]]
             [inflections.core :refer [hyphenize underscore]]
             [inflections.transform :refer [transform-keys transform-values]])
@@ -41,11 +41,11 @@
     body))
 
 (defn decode-json
-  "Docode the body of `response` via `read-str` and attach the rest
-  of the response as meta data."
+  "Docode the body of `response` from JSON and attach the rest of the
+  response as meta data."
   [response]
   (if (string? (:body response))
-    (-> (decode-body (assoc response :body (read-str (:body response) :key-fn keyword)))
+    (-> (decode-body (assoc response :body (json/decode (:body response) true)))
         (transform-keys hyphenize))
     (decode-body response)))
 
