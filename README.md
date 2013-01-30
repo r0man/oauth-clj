@@ -12,12 +12,12 @@ Via Clojars: http://clojars.org/oauth-clj.
 
 Define your consumer key and secret.
 
-    (def oauth-consumer-key "qcz2O57srPsb5eZA2Jyw")
-    (def oauth-consumer-secret "lfs5WjmIzPc3OlDNoHSfbxVBmPNmduTDq4rQHhNN7Q")
+    (def consumer-key "qcz2O57srPsb5eZA2Jyw")
+    (def consumer-secret "lfs5WjmIzPc3OlDNoHSfbxVBmPNmduTDq4rQHhNN7Q")
 
 Obtain a OAuth request token from Twitter to request user authorization.
 
-    (def request-token (oauth-request-token oauth-consumer-key oauth-consumer-secret))
+    (def request-token (oauth-request-token consumer-key consumer-secret))
     ;;=> {:oauth-callback-confirmed "true",
     ;;=>  :oauth-token-secret "1TPRuaqWZ9Y9viEdKbU4SQ2QsF5auLcMZaHOwYLK2ao",
     ;;=>  :oauth-token "C6FCXGYUIutgTZZP1EAAx2nT0cv8QO15K4EbjbzOmBs"}
@@ -36,7 +36,7 @@ Obtain the OAuth access token from Twitter.
 
     (def access-token
       (oauth-access-token
-       oauth-consumer-key
+       consumer-key
        (:oauth-token authorization)
        (:oauth-verifier authorization)))
 
@@ -44,8 +44,8 @@ Make a clj-http OAuth client.
 
     (def client
       (oauth-client
-       oauth-consumer-key
-       oauth-consumer-secret
+       consumer-key
+       consumer-secret
        (:oauth-token access-token)
        (:oauth-verifier access-token)))
 
