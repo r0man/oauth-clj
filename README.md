@@ -1,4 +1,4 @@
-# OAUTH-CLJ
+# OAUTH-CLJ [![Build Status](https://travis-ci.org/r0man/oauth-clj.png)](https://travis-ci.org/r0man/oauth-clj)
 
 A clj-http compatible OAuth library for Clojure.
 
