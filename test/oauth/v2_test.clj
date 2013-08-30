@@ -1,8 +1,8 @@
-(ns oauth.test.v2
+(ns oauth.v2-test
   (:require [clj-http.client :as http])
   (:use [clojure.java.browse :only (browse-url)]
         [oauth.facebook :only (*oauth-access-token-url* *oauth-authorization-url*)]
-        [oauth.test.facebook :only (facebook-access-token facebook-access-token facebook-client-id facebook-code facebook-redirect-uri facebook-client-secret)]
+        [oauth.facebook-test :only (facebook-access-token facebook-access-token facebook-client-id facebook-code facebook-redirect-uri facebook-client-secret)]
         clojure.test
         oauth.v2))
 

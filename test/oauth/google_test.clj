@@ -1,4 +1,4 @@
-(ns oauth.test.google
+(ns oauth.google-test
   (:require [oauth.v2 :as v2])
   (:use [clojure.java.browse :only (browse-url)]
         [clj-http.client :only [parse-url]]

@@ -1,4 +1,4 @@
-(ns oauth.test.io
+(ns oauth.io-test
   (:require [cheshire.core :as json])
   (:use clojure.test
         oauth.io))

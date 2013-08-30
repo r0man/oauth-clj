@@ -1,4 +1,4 @@
-(ns oauth.test.twitter
+(ns oauth.twitter-test
   (:use clojure.test
         oauth.twitter))
 

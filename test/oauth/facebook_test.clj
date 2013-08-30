@@ -1,4 +1,4 @@
-(ns oauth.test.facebook
+(ns oauth.facebook-test
   (:require [oauth.v2 :as v2])
   (:use [clojure.java.browse :only (browse-url)]
         clojure.test

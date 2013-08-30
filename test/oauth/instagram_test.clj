@@ -1,4 +1,4 @@
-(ns oauth.test.instagram
+(ns oauth.instagram-test
   (:require [clj-http.client :refer [parse-url]]
             [oauth.v2 :as v2])
   (:use [clojure.java.browse :only (browse-url)]

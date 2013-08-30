@@ -1,8 +1,8 @@
-(ns oauth.test.util
+(ns oauth.util-test
   (:import org.apache.http.entity.StringEntity)
   (:use [clojure.string :only (blank?)]
         clojure.test
-        oauth.test.twitter
+        oauth.twitter-test
         oauth.util))
 
 (deftest test-byte-array?

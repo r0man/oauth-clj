@@ -1,8 +1,8 @@
-(ns oauth.test.v1
+(ns oauth.v1-test
   (:require [clj-http.client :as http])
   (:use [clojure.java.browse :only (browse-url)]
         clojure.test
-        oauth.test.twitter
+        oauth.twitter-test
         oauth.v1))
 
 (deftest test-oauth-authorization-header
