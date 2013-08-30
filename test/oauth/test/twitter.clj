@@ -25,7 +25,7 @@
   {:method :post
    :scheme "https"
    :server-name "api.twitter.com"
-   :uri "/1/statuses/update.json"
+   :uri "/1.1/statuses/update.json"
    :query-params {:include_entities true}
    :body "status=Hello%20Ladies%20%2b%20Gentlemen%2c%20a%20signed%20OAuth%20request%21"
    :oauth-consumer-key "xvz1evFS4wEEPTGEFPHBog"
@@ -66,24 +66,17 @@
     (is (= "true" (:oauth-callback-confirmed request-token)))))
 
 (deftest test-verify-credentials
-  (let [user (twitter-client {:method :get :url "https://api.twitter.com/1/account/verify_credentials.json"})]
+  (let [user (twitter-client {:method :get :url "https://api.twitter.com/1.1/account/verify_credentials.json"})]
     (is (map? user))
     (is (= 469240209 (:id user)))
     (let [response (meta user)]
       (is (= 200 (:status response))))))
 
-(deftest test-update-status-body
-  (let [status (format "Test %s" (java.util.Date.))
-        body (str "status=" status)
-        response (twitter-client {:method :post :url "https://api.twitter.com/1/statuses/update.json" :body body})]
-    (is (string? (:id-str response)))
-    (is (= status (:text response)))))
-
 (deftest test-update-status-query-params
   (let [status (format "Test %s" (java.util.Date.))
         response (twitter-client
                   {:method :post
-                   :url "https://api.twitter.com/1/statuses/update.json"
+                   :url "https://api.twitter.com/1.1/statuses/update.json"
                    :query-params {:status status}})]
     (is (string? (:id-str response)))
     (is (= status (:text response)))))
@@ -92,7 +85,7 @@
   (let [status (format "Test %s" (java.util.Date.))
         response (twitter-client
                   {:method :post
-                   :url "https://api.twitter.com/1/statuses/update.json"
+                   :url "https://api.twitter.com/1.1/statuses/update.json"
                    :form-params {:status status}})]
     (is (string? (:id-str response)))
     (is (= status (:text response)))))

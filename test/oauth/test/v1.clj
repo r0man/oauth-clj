@@ -67,14 +67,14 @@
     (is (= "Hello Ladies + Gentlemen, a signed OAuth request!" (get params "status")))))
 
 (deftest test-oauth-request-signature
-  (is (= "tnnArxj06cWHq44gCs1OSKk/jLY="
+  (is (= "hCtSmYh+iHYCEqBWrE7C7hYmtUk="
          (oauth-request-signature twitter-update-status "kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw" "LswwdoUaIvS8ltyTt5jkRh4J50vUPVVHtR2YPi5kE")))
   (is (= "8wUi7m5HFQy76nowoCThusfgB+Q="
          (oauth-request-signature twitter-request-token "MCD8BKwGdgPHvAuvgvz4EQpqDAtx89grbuNMRd7Eh98" nil))))
 
 (deftest test-oauth-signature-base
   (is (= (str "POST&"
-              "https%3A%2F%2Fapi.twitter.com%2F1%2Fstatuses%2Fupdate.json&"
+              "https%3A%2F%2Fapi.twitter.com%2F1.1%2Fstatuses%2Fupdate.json&"
               "include_entities%3Dtrue%26"
               "oauth_consumer_key%3Dxvz1evFS4wEEPTGEFPHBog%26"
               "oauth_nonce%3DkYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg%26"
@@ -109,7 +109,7 @@
 
 (deftest test-wrap-oauth-signature
   ((wrap-oauth-signature
-    #(is (= "tnnArxj06cWHq44gCs1OSKk/jLY=" (:oauth-signature %1))))
+    #(is (= "hCtSmYh+iHYCEqBWrE7C7hYmtUk=" (:oauth-signature %1))))
    (assoc twitter-update-status
      :oauth-consumer-secret "kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw"
      :oauth-token-secret "LswwdoUaIvS8ltyTt5jkRh4J50vUPVVHtR2YPi5kE")))

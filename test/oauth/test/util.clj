@@ -31,7 +31,7 @@
 (deftest test-format-base-url
   (are [request expected]
     (is (= expected (format-base-url request)))
-    twitter-update-status "https://api.twitter.com/1/statuses/update.json"))
+    twitter-update-status "https://api.twitter.com/1.1/statuses/update.json"))
 
 (deftest test-format-authorization
   (= (str "OAuth" (format-options twitter-update-status)) (format-authorization twitter-update-status)))
