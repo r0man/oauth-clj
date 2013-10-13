@@ -4,7 +4,7 @@
             [clj-http.core :as core]
             [cheshire.core :as json]
             [clojure.string :refer [blank? replace]]
-            [inflections.core :refer [hyphenize]]
+            [inflections.core :refer [hyphenize-keys]]
             [oauth.util :refer [parse-body]]))
 
 (defn content-type
@@ -85,7 +85,7 @@
       (handler request)
       (-> (handler request)
           (deserialize)
-          (update-in [:body] hyphenize)))))
+          (update-in [:body] hyphenize-keys)))))
 
 (def request
   (-> #'core/request

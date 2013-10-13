@@ -4,7 +4,7 @@
             [clj-http.util :refer [base64-encode]]
             [clojure.java.browse :refer [browse-url]]
             [clojure.string :refer [join replace]]
-            [inflections.transform :refer [transform-keys]]
+            [inflections.core :refer [transform-keys]]
             [oauth.util :as util]
             [oauth.io :refer [request]]))
 
