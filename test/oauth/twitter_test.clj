@@ -73,7 +73,7 @@
       (is (= 200 (:status response))))))
 
 (deftest test-update-status-query-params
-  (let [status (format "Test %s" (java.util.Date.))
+  (let [status (format "Test-q %s" (java.util.Date.))
         response (twitter-client
                   {:method :post
                    :url "https://api.twitter.com/1.1/statuses/update.json"
@@ -82,7 +82,7 @@
     (is (= status (:text response)))))
 
 (deftest test-update-status-form-params
-  (let [status (format "Test %s" (java.util.Date.))
+  (let [status (format "Test-f %s" (java.util.Date.))
         response (twitter-client
                   {:method :post
                    :url "https://api.twitter.com/1.1/statuses/update.json"
