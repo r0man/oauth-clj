@@ -5,36 +5,14 @@
         oauth.github))
 
 (def github-access-token
-  "7734591ab7093f9e5825d62b040b3fe527b57a3b")
+  "eba083597f7a25945cf3546a4591b8829f56f536")
 
-(def github-client-id "f0040abaefab461310aa")
+(def github-client-id "8e89fcdfe73e5325e16f")
 
-(def github-client-secret "1eacbf61ea266092d3e907870f7938654b6da090")
+(def github-client-secret "ad1de66992d850f4edd1bb0c36174c8dd1acf1a2")
 
 (def github-redirect-uri "http://localhost/oauth/github/callback")
 
-(def facebook-code
-  (str "AQDHV_kgQvlQHMFt5uyvCpVBB9QVTLaWzReBukLF7E6sBXEFofph07uQKKAmL512Sc0xEp-5yo9BLpk"
-       "8yxWvrgQJ99ycTP7We3FnM-uiQCUQJukn1ux4-4zgGtUykeaU6AxArsBsWm2pPoTL2hKV9GAAf7kVh4"
-       "1EGtcXLHSKLfrPEKY6xPm7C6BPOi8daqeEfxVAvn_MiVI0bZIjAP4r1H8Z#_=_"))
-
-;; (deftest test-me-endpoint
-;;   (let [user ((oauth-client facebook-access-token) {:method :get :url "https://graph.facebook.com/me"})]
-;;     (is (map? user))
-;;     (is (= "100001026171775" (:id user)))
-;;     (let [response (meta user)]
-;;       (is (= 200 (:status response)))
-;;       (is (not (contains? (set (keys response)) :body))))))
-
-;; (deftest test-oauth-access-token
-;;   (let [access-token
-;;         (oauth-access-token
-;;          facebook-client-id
-;;          facebook-client-secret
-;;          facebook-code
-;;          facebook-redirect-uri)]
-;;     (is (string? (:access-token access-token)))
-;;     (is (string? (:expires access-token)))))
 
 (deftest test-oauth-authorization-url
   (is (= (str "https://github.com/login/oauth/authorize?"
