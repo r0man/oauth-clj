@@ -30,37 +30,6 @@
   [response]
   (first (split (get (:headers response) "content-type") #";")))
 
-(defn decode-body
-  "Returns the :body key of `request`. If body is an instance of
-  clojure.lang.IMeta, the rest of response will be attached as meta
-  data."
-  [{:keys [body] :as response}]
-  (if (instance? clojure.lang.IMeta body)
-    (with-meta body (dissoc response :body))
-    body))
-
-(defn decode-json
-  "Docode the body of `response` from JSON and attach the rest of the
-  response as meta data."
-  [response]
-  (if (string? (:body response))
-    (-> (decode-body (assoc response :body (json/decode (:body response) true)))
-        (transform-keys hyphenize))
-    (decode-body response)))
-
-(defmulti decode-response
-  "Decode `response` according to the content-type header."
-  (fn [response] (content-type response)))
-
-(defmethod decode-response "application/json" [response]
-  (decode-json response))
-
-(defmethod decode-response "text/javascript" [response]
-  (decode-json response))
-
-(defmethod decode-response :default [response]
-  (decode-body response))
-
 (defn format-option [[k v]]
   (format "%s=\"%s\"" (underscore (name k)) (url-encode (str v))))
 
@@ -167,8 +136,3 @@
     (->> (or (:content-type request) content-type)
          (assoc request :content-type)
          (client))))
-
-(defn wrap-decode-response
-  "Returns an HTTP client that decodes the request body accoring to
-  the content-type header."
-  [client] (fn [request] (decode-response (client request))))
