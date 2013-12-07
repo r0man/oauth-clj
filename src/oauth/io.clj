@@ -84,12 +84,21 @@
     (if (= :stream (:as request))
       (handler request)
       (-> (handler request)
-          (deserialize)
-          (update-in [:body] hyphenize-keys)))))
+          (deserialize)))))
+
+(defn wrap-output-hyphenize
+  "Returns a HTTP client that recursively replaces all underscores in
+  the keys of the response map to dashes."
+  [handler]
+  (fn [request]
+    (let [response (handler request)]
+      (if (:skip-hyphenize request)
+        response (hyphenize-keys response)))))
 
 (def request
   (-> #'core/request
       (wrap-request)
       (wrap-input-coercion)
       (wrap-output-coercion)
+      (wrap-output-hyphenize)
       (wrap-meta-response)))
