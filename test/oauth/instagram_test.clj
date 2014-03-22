@@ -30,4 +30,4 @@
   (let [client (oauth-client client-id)
         result (client {:method :get :url "https://api.instagram.com/v1/media/search"
                         :query-params {:lat -8.80027 :lng 115.160618}})]
-    (is seq? result)))
+    (is (map? result))))

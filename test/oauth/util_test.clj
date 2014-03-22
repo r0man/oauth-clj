@@ -46,14 +46,19 @@
     {:request-method :get} "GET"))
 
 (deftest test-format-options
-  (= (str "oauth_token=\"370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb\", "
-          "oauth_signature_method=\"HMAC-SHA1\", "
-          "oauth_timestamp=\"1318622958\", "
-          "oauth_signature=\"tnnArxj06cWHq44gCs1OSKk%2FjLY%3D\", "
-          "oauth_nonce=\"kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg\", "
-          "oauth_version=\"1.0\", "
-          "oauth_consumer_key=\"xvz1evFS4wEEPTGEFPHBog\"")
-     (format-options twitter-update-status)))
+  (is (= ["body=\"status%3DHello%2520Ladies%2520%252b%2520Gentlemen%252c%2520a%2520signed%2520OAuth%2520request%2521\""
+          "method=\"%3Apost\""
+          "oauth_consumer_key=\"xvz1evFS4wEEPTGEFPHBog\""
+          "oauth_nonce=\"kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg\""
+          "oauth_signature_method=\"HMAC-SHA1\""
+          "oauth_timestamp=\"1318622958\""
+          "oauth_token=\"370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb\""
+          "oauth_version=\"1.0\""
+          "query_params=\"%7B%3Ainclude_entities+true%7D\""
+          "scheme=\"https\""
+          "server_name=\"api.twitter.com\""
+          "uri=\"%2F1.1%2Fstatuses%2Fupdate.json\""]
+         (format-options twitter-update-status))))
 
 (deftest test-root-url
   (are [request expected]
