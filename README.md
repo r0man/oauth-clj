@@ -6,6 +6,8 @@ A clj-http compatible OAuth library for Clojure.
 
 Via Clojars: http://clojars.org/oauth-clj.
 
+[![Current Version](https://clojars.org/oauth-clj/latest-version.svg)](https://clojars.org/oauth-clj)
+
 ## Usage
 
     (use 'oauth.twitter)
