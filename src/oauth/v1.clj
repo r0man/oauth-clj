@@ -1,6 +1,6 @@
 (ns oauth.v1
   (:refer-clojure :exclude [replace])
-  (:require [clj-http.client :refer [wrap-request wrap-url]]
+  (:require [clj-http.client :refer [parse-url wrap-request wrap-url]]
             [clj-http.util :refer [base64-encode]]
             [clojure.java.browse :refer [browse-url]]
             [clojure.string :refer [join replace]]
@@ -120,20 +120,20 @@
 
 (defn oauth-access-token
   "Obtain the OAuth access token."
-  [url oauth-consumer-key oauth-token oauth-verifier]
+  [url oauth-consumer-key oauth-token oauth-verifier & [request]]
   ((make-consumer
     :oauth-consumer-key oauth-consumer-key
     :oauth-token oauth-token
     :oauth-verifier oauth-verifier)
-   {:method :post :url url}))
+   (merge {:method :post} (parse-url url) request)))
 
 (defn oauth-request-token
   "Obtain the OAuth request token to request user authorization."
-  [url oauth-consumer-key oauth-consumer-secret]
+  [url oauth-consumer-key oauth-consumer-secret & [request]]
   ((make-consumer
     :oauth-consumer-key oauth-consumer-key
     :oauth-consumer-secret oauth-consumer-secret)
-   {:method :post :url url}))
+   (merge {:method :post} (parse-url url) request)))
 
 (defn oauth-client
   "Returns a HTTP client for version 1 of the OAuth protocol."
