@@ -1,16 +1,16 @@
 (ns oauth.io-test
-  (:require [cheshire.core :as json])
-  (:use clojure.test
-        oauth.io))
+  (:require [cheshire.core :as json]
+            [clojure.test :refer :all]
+            [oauth.io :refer :all]))
 
 (deftest test-content-type
   (are [type expected]
-       (is (= expected (content-type {:headers {"content-type" type}})))
-       nil nil
-       "" nil
-       "appication/json" :appication/json
-       "appication/clojure" :appication/clojure
-       "application/json;charset=UTF-8" :application/json))
+    (is (= expected (content-type {:headers {"content-type" type}})))
+    nil nil
+    "" nil
+    "appication/json" :appication/json
+    "appication/clojure" :appication/clojure
+    "application/json;charset=UTF-8" :application/json))
 
 (deftest test-deserialize
   (is (nil? (deserialize nil)))

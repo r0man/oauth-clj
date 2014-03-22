@@ -1,6 +1,6 @@
 (ns oauth.twitter-test
-  (:use clojure.test
-        oauth.twitter))
+  (:require [clojure.test :refer :all]
+            [oauth.twitter :refer :all]))
 
 (def example-consumer-key
   "qcz2O57srPsb5eZA2Jyw")

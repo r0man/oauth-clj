@@ -1,9 +1,9 @@
 (ns oauth.google-test
-  (:require [oauth.v2 :as v2])
-  (:use [clojure.java.browse :only (browse-url)]
-        [clj-http.client :only [parse-url]]
-        clojure.test
-        oauth.google))
+  (:require [clj-http.client :refer [parse-url]]
+            [clojure.java.browse :refer [browse-url]]
+            [clojure.test :refer :all]
+            [oauth.google :refer :all]
+            [oauth.v2 :as v2]))
 
 (def google-access-token
   "")

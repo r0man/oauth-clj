@@ -1,9 +1,9 @@
 (ns oauth.instagram-test
   (:require [clj-http.client :refer [parse-url]]
-            [oauth.v2 :as v2])
-  (:use [clojure.java.browse :only (browse-url)]
-        clojure.test
-        oauth.instagram))
+            [clojure.java.browse :refer (browse-url)]
+            [clojure.test :refer :all]
+            [oauth.instagram :refer :all]
+            [oauth.v2 :as v2]))
 
 (def client-id "4dd9fe7ba08a424f838e96bed2db5af3")
 (def client-secret "1dd8b4e0492f3e6113f1014e38d317f9")

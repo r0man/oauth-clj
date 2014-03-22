@@ -1,8 +1,8 @@
 (ns oauth.github-test
-  (:require [oauth.v2 :as v2])
-  (:use [clojure.java.browse :only (browse-url)]
-        clojure.test
-        oauth.github))
+  (:require [clojure.java.browse :refer [browse-url]]
+            [clojure.test :refer :all]
+            [oauth.github :refer :all]
+            [oauth.v2 :as v2]))
 
 (def github-access-token
   "eba083597f7a25945cf3546a4591b8829f56f536")

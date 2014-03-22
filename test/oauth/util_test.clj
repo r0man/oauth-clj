@@ -1,9 +1,9 @@
 (ns oauth.util-test
   (:import org.apache.http.entity.StringEntity)
-  (:use [clojure.string :only (blank?)]
-        clojure.test
-        oauth.twitter-test
-        oauth.util))
+  (:require [clojure.string :refer [blank?]]
+            [clojure.test :refer :all]
+            [oauth.twitter-test :refer :all]
+            [oauth.util :refer :all]))
 
 (deftest test-byte-array?
   (is (not (byte-array? nil)))
@@ -28,7 +28,7 @@
     twitter-update-status "https://api.twitter.com/1.1/statuses/update.json"))
 
 (deftest test-format-authorization
-  (= (str "OAuth" (format-options twitter-update-status)) (format-authorization twitter-update-status)))
+  (is (string? (format-authorization twitter-update-status))))
 
 (deftest test-format-query-params
   (are [params expected]

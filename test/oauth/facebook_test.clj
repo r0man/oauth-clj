@@ -1,8 +1,8 @@
 (ns oauth.facebook-test
-  (:require [oauth.v2 :as v2])
-  (:use [clojure.java.browse :only (browse-url)]
-        clojure.test
-        oauth.facebook))
+  (:require [clojure.java.browse :refer [browse-url]]
+            [clojure.test :refer :all]
+            [oauth.v2 :as v2]
+            [oauth.facebook :refer :all]))
 
 (def facebook-access-token
   "AAAEFLdD911QBABjIcoGUnQCXdDLOEZAuuNxdarxLGNcZCucZC070FzHHe1D9OYILBYvHFSKfJwfq8ymD0j0MZACmnhOTbDEURzZBXBovM4gZDZD")
