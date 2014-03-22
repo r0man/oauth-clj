@@ -1,9 +1,10 @@
 (ns oauth.v1
   (:refer-clojure :exclude [replace])
-  (:require [clj-http.client :refer [parse-url wrap-request wrap-url]]
+  (:require [clj-http.client :refer [wrap-request wrap-url]]
             [clj-http.util :refer [base64-encode]]
             [clojure.java.browse :refer [browse-url]]
             [clojure.string :refer [join replace]]
+            [no.en.core :refer [parse-url]]
             [inflections.core :refer [transform-keys]]
             [oauth.util :as util]
             [oauth.io :refer [request]]))
