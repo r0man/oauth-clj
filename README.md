@@ -13,53 +13,69 @@ Via Clojars: http://clojars.org/oauth-clj.
 
 ## Usage
 
-    (use 'oauth.twitter)
+``` clj
+(use 'oauth.twitter)
+```
 
 Define your consumer key and secret.
 
-    (def consumer-key "qcz2O57srPsb5eZA2Jyw")
-    (def consumer-secret "lfs5WjmIzPc3OlDNoHSfbxVBmPNmduTDq4rQHhNN7Q")
+``` clj
+(def consumer-key "qcz2O57srPsb5eZA2Jyw")
+(def consumer-secret "lfs5WjmIzPc3OlDNoHSfbxVBmPNmduTDq4rQHhNN7Q")
+```
 
 Obtain a OAuth request token from Twitter to request user authorization.
 
-    (def request-token (oauth-request-token consumer-key consumer-secret))
-    ;;=> {:oauth-callback-confirmed "true",
-    ;;=>  :oauth-token-secret "1TPRuaqWZ9Y9viEdKbU4SQ2QsF5auLcMZaHOwYLK2ao",
-    ;;=>  :oauth-token "C6FCXGYUIutgTZZP1EAAx2nT0cv8QO15K4EbjbzOmBs"}
+``` clj
+(def request-token (oauth-request-token consumer-key consumer-secret))
+;;=> {:oauth-callback-confirmed "true",
+;;=>  :oauth-token-secret "1TPRuaqWZ9Y9viEdKbU4SQ2QsF5auLcMZaHOwYLK2ao",
+;;=>  :oauth-token "C6FCXGYUIutgTZZP1EAAx2nT0cv8QO15K4EbjbzOmBs"}
+```
 
 Send the user to Twitter's authorization endpoint.
 
-    (oauth-authorize (:oauth-token request-token))
+``` clj
+(oauth-authorize (:oauth-token request-token))
+```
 
 Parse the parameters in your oauth callback endpoint.
 
-    (def authorization
-      {:oauth-verifier "ZCpKl8mgIUJmTkO8rfBeFotrKKd84igvytvLqlzo"
-       :oauth-token "a5wQRcMsl5BMSPTmxZG5ER8OzMH6jdG4kX4uPtbC4Rw"})
+``` clj
+(def authorization
+  {:oauth-verifier "ZCpKl8mgIUJmTkO8rfBeFotrKKd84igvytvLqlzo"
+   :oauth-token "a5wQRcMsl5BMSPTmxZG5ER8OzMH6jdG4kX4uPtbC4Rw"})
+```
 
 Obtain the OAuth access token from Twitter.
 
-    (def access-token
-      (oauth-access-token
-       consumer-key
-       (:oauth-token authorization)
-       (:oauth-verifier authorization)))
+``` clj
+(def access-token
+  (oauth-access-token
+   consumer-key
+   (:oauth-token authorization)
+   (:oauth-verifier authorization)))
+```
 
 Make a clj-http OAuth client.
 
-    (def client
-      (oauth-client
-       consumer-key
-       consumer-secret
-       (:oauth-token access-token)
-       (:oauth-verifier access-token)))
+``` clj
+(def client
+  (oauth-client
+   consumer-key
+   consumer-secret
+   (:oauth-token access-token)
+   (:oauth-verifier access-token)))
+```
 
 Post a Tweet ...
 
-    (client
-     {:method :post
-      :url "http://api.twitter.com/1/statuses/update.json"
-      :body (str "status=setting%20up%20my%20twitter%20私のさえずりを設定する")})
+``` clj
+(client
+ {:method :post
+  :url "http://api.twitter.com/1/statuses/update.json"
+  :body (str "status=setting%20up%20my%20twitter%20私のさえずりを設定する")})
+```
 
 ## License
 
