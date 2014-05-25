@@ -6,8 +6,8 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :lein-release {:deploy-via :clojars}
   :dependencies [[clj-http "0.9.1"]
-                 [inflections "0.9.5"]
-                 [noencore "0.1.12"]
+                 [inflections "0.9.7"]
+                 [noencore "0.1.15"]
                  [org.clojure/clojure "1.5.1"]]
-  :profiles {:dev {:dependencies [[org.slf4j/slf4j-log4j12 "1.7.6"]]
+  :profiles {:dev {:dependencies [[org.slf4j/slf4j-log4j12 "1.7.7"]]
                    :resource-paths ["test-resources"]}})
