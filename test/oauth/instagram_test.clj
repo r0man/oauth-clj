@@ -1,5 +1,5 @@
 (ns oauth.instagram-test
-  (:require [clj-http.client :refer [parse-url]]
+  (:require [no.en.core :refer [parse-url]]
             [clojure.java.browse :refer (browse-url)]
             [clojure.test :refer :all]
             [oauth.instagram :refer :all]
@@ -14,10 +14,12 @@
   (let [url (parse-url (oauth-authorization-url client-id redirect-uri))]
     (is (= :https (:scheme url)))
     (is (= "api.instagram.com" (:server-name url)))
-    (is (nil? (:server-port url)))
+    (is (= 443 (:server-port url)))
     (is (= "/oauth/authorize" (:uri url)))
-    (is (= "client_id=4dd9fe7ba08a424f838e96bed2db5af3&redirect_uri=http%3A%2F%2Flocalhost%2Foauth%2Finstagram&response_type=code"
-           (:query-string url)))))
+    (is (= {:response_type "code"
+            :client_id "4dd9fe7ba08a424f838e96bed2db5af3"
+            :redirect_uri "http://localhost/oauth/instagram"}
+           (:query-params url)))))
 
 (deftest test-oauth-authorize
   (with-redefs [browse-url (fn [target] (is (= (oauth-authorization-url client-id redirect-uri) target)))]

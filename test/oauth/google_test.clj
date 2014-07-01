@@ -56,9 +56,12 @@
     (is (= :https (:scheme url)))
     (is (= "accounts.google.com" (:server-name url)))
     (is (= "/o/oauth2/auth" (:uri url)))
-    (is (= (str "access_type=offline&client_id=173176451919.apps.googleusercontent.com&"
-                "redirect_uri=https%3A%2F%2Flocalhost%2Foauth2callback&response_type=code&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email")
-           (:query-string url)))))
+    (is (= {:scope "https://www.googleapis.com/auth/userinfo.email"
+            :response_type "code"
+            :access_type "offline"
+            :client_id "173176451919.apps.googleusercontent.com"
+            :redirect_uri "https://localhost/oauth2callback"}
+           (:query-params url)))))
 
 (deftest test-oauth-authorize
   (with-redefs [browse-url (fn [target] (is (= (oauth-authorization-url google-client-id "http://example.com") target)))]
