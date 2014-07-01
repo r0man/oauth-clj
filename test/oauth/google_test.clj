@@ -1,5 +1,5 @@
 (ns oauth.google-test
-  (:require [clj-http.client :refer [parse-url]]
+  (:require [no.en.core :refer [parse-url]]
             [clojure.java.browse :refer [browse-url]]
             [clojure.test :refer :all]
             [oauth.google :refer :all]
@@ -46,10 +46,12 @@
     (is (= :https (:scheme url)))
     (is (= "accounts.google.com" (:server-name url)))
     (is (= "/o/oauth2/auth" (:uri url)))
-    (is (= (str "access_type=offline&client_id=173176451919.apps.googleusercontent.com&"
-                "redirect_uri=https%3A%2F%2Flocalhost%2Foauth2callback&response_type=code&"
-                "scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email")
-           (:query-string url))))
+    (is (= {:scope "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile"
+            :response_type "code"
+            :access_type "offline"
+            :client_id "173176451919.apps.googleusercontent.com"
+            :redirect_uri "https://localhost/oauth2callback"}
+           (:query-params url))))
   (let [url (parse-url (oauth-authorization-url google-client-id google-redirect-uri :scope (scopes :email)))]
     (is (= :https (:scheme url)))
     (is (= "accounts.google.com" (:server-name url)))
