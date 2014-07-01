@@ -4,7 +4,7 @@
             [clj-http.core :as core]
             [cheshire.core :as json]
             [clojure.string :refer [blank? replace]]
-            [inflections.core :refer [hyphenize-keys]]
+            [inflections.core :refer [hyphenate-keys]]
             [oauth.util :refer [parse-body]]))
 
 (defn content-type
@@ -86,19 +86,19 @@
       (-> (handler request)
           (deserialize)))))
 
-(defn wrap-output-hyphenize
+(defn wrap-output-hyphenate
   "Returns a HTTP client that recursively replaces all underscores in
   the keys of the response map to dashes."
   [handler]
   (fn [request]
     (let [response (handler request)]
-      (if (:skip-hyphenize request)
-        response (hyphenize-keys response)))))
+      (if (:skip-hyphenate request)
+        response (hyphenate-keys response)))))
 
 (def request
   (-> #'core/request
       (wrap-request)
       (wrap-input-coercion)
       (wrap-output-coercion)
-      (wrap-output-hyphenize)
+      (wrap-output-hyphenate)
       (wrap-meta-response)))

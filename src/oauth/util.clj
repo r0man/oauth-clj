@@ -4,7 +4,7 @@
             [clj-http.util :refer [base64-encode url-encode url-decode]]
             [cheshire.core :as json]
             [clojure.string :refer [blank? join replace split upper-case]]
-            [inflections.core :refer [hyphenize underscore transform-keys transform-values]])
+            [inflections.core :refer [hyphenate underscore transform-keys transform-values]])
   (:import java.security.SecureRandom
            javax.crypto.Mac
            javax.crypto.spec.SecretKeySpec
@@ -83,7 +83,7 @@
   [body]
   (reduce
    #(let [[k v] (split %2 #"=")]
-      (assoc %1 (hyphenize (keyword k)) v))
+      (assoc %1 (hyphenate (keyword k)) v))
    {} (split body #"&")))
 
 (defn parse-body-params
