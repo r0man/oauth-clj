@@ -107,12 +107,23 @@
 (defn wrap-oauth-signature
   "Returns a HTTP client that signs an OAuth request."
   [client & [consumer-secret token-secret]]
-  (fn [request] (client (oauth-sign-request request consumer-secret token-secret))))
+  (fn [request]
+    (client (oauth-sign-request request consumer-secret token-secret))))
+
+(defn wrap-remove-oauth-token
+  "Remove the :oauth-token token from `request` to make sure the
+  clj-http OAuth2 machinery doesn't kick it."
+  [client]
+  (fn [request]
+    (if (get-in request [:headers "Authorization"])
+      (client (dissoc request :oauth-token))
+      (client request))))
 
 (defn make-consumer
   "Returns an OAuth consumer HTTP client."
   [& {:as oauth-defaults}]
   (-> request
+      (wrap-remove-oauth-token)
       (util/wrap-content-type util/x-www-form-urlencoded)
       (wrap-oauth-authorization)
       (wrap-oauth-signature)
