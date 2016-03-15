@@ -1,7 +1,6 @@
 # OAUTH-CLJ
-  [![Build Status](https://travis-ci.org/r0man/oauth-clj.png)](https://travis-ci.org/r0man/oauth-clj)
-  [![Dependencies Status](http://jarkeeper.com/r0man/oauth-clj/status.png)](http://jarkeeper.com/r0man/oauth-clj)
-  [![Gittip](http://img.shields.io/gittip/r0man.svg)](https://www.gittip.com/r0man)
+  [![Build Status](https://travis-ci.org/r0man/oauth-clj.svg)](https://travis-ci.org/r0man/oauth-clj)
+  [![Dependencies Status](http://jarkeeper.com/r0man/oauth-clj/status.svg)](http://jarkeeper.com/r0man/oauth-clj)
 
 A clj-http compatible OAuth library for Clojure.
 
@@ -79,6 +78,6 @@ Post a Tweet ...
 
 ## License
 
-Copyright (C) 2012-2014 r0man
+Copyright (C) 2012-2016 r0man
 
 Distributed under the Eclipse Public License, the same as Clojure.
