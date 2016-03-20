@@ -7,6 +7,8 @@
 
   A [[https://github.com/dakrone/clj-http][clj-http]] compatible OAuth library for Clojure.
 
+  [[http://1.bp.blogspot.com/_ZEQTZAmHudI/TGFfdi9vsQI/AAAAAAAABu0/y9IO0RfafN4/s400/OAuth-at-the-DMV.png]]
+
 ** Usage
 
    #+BEGIN_SRC clojure
