@@ -1,0 +1,80 @@
+* OAUTH-CLJ
+
+  [[https://clojars.org/oauth-clj][https://img.shields.io/clojars/v/oauth-clj.svg]]
+  [[https://travis-ci.org/r0man/oauth-clj][https://travis-ci.org/r0man/oauth-clj.svg]]
+  [[http://jarkeeper.com/r0man/oauth-clj][http://jarkeeper.com/r0man/oauth-clj/status.svg]]
+  [[http://jarkeeper.com/r0man/oauth-clj][https://jarkeeper.com/r0man/oauth-clj/downloads.svg]]
+
+  A [[https://github.com/dakrone/clj-http][clj-http]] compatible OAuth library for Clojure.
+
+** Usage
+
+   #+BEGIN_SRC clojure
+     (use 'oauth.twitter)
+   #+END_SRC
+
+   Define your consumer key and secret.
+
+   #+BEGIN_SRC clojure
+     (def consumer-key "qcz2O57srPsb5eZA2Jyw")
+     (def consumer-secret "lfs5WjmIzPc3OlDNoHSfbxVBmPNmduTDq4rQHhNN7Q")
+   #+END_SRC
+
+   Obtain a OAuth request token from Twitter to request user authorization.
+
+   #+BEGIN_SRC clojure
+     (def request-token (oauth-request-token consumer-key consumer-secret))
+     ;;=> {:oauth-callback-confirmed "true",
+     ;;=>  :oauth-token-secret "1TPRuaqWZ9Y9viEdKbU4SQ2QsF5auLcMZaHOwYLK2ao",
+     ;;=>  :oauth-token "C6FCXGYUIutgTZZP1EAAx2nT0cv8QO15K4EbjbzOmBs"}
+   #+END_SRC
+
+   Send the user to Twitter's authorization endpoint.
+
+   #+BEGIN_SRC clojure
+     (oauth-authorize (:oauth-token request-token))
+   #+END_SRC
+
+   Parse the parameters in your oauth callback endpoint.
+
+   #+BEGIN_SRC clojure
+     (def authorization
+       {:oauth-verifier "ZCpKl8mgIUJmTkO8rfBeFotrKKd84igvytvLqlzo"
+        :oauth-token "a5wQRcMsl5BMSPTmxZG5ER8OzMH6jdG4kX4uPtbC4Rw"})
+   #+END_SRC
+
+   Obtain the OAuth access token from Twitter.
+
+   #+BEGIN_SRC clojure
+     (def access-token
+       (oauth-access-token
+        consumer-key
+        (:oauth-token authorization)
+        (:oauth-verifier authorization)))
+   #+END_SRC
+
+   Make a clj-http OAuth client.
+
+   #+BEGIN_SRC clojure
+     (def client
+       (oauth-client
+        consumer-key
+        consumer-secret
+        (:oauth-token access-token)
+        (:oauth-token-secret access-token)))
+   #+END_SRC
+
+   Post a Tweet ...
+
+   #+BEGIN_SRC clojure
+     (client
+      {:method :post
+       :url "http://api.twitter.com/1/statuses/update.json"
+       :body (str "status=setting%20up%20my%20twitter%20私のさえずりを設定する")})
+   #+END_SRC
+
+** License
+
+   Copyright (C) 2012-2016 r0man
+
+   Distributed under the Eclipse Public License, the same as Clojure.
