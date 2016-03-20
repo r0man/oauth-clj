@@ -1,5 +1,6 @@
 (ns oauth.etsy
-  (:require [oauth.v1 :as v1]))
+  (:require [clj-http.util :refer [url-decode]]
+            [oauth.v1 :as v1]))
 
 (def ^:dynamic *oauth-access-token-url*
   "https://openapi.etsy.com/v2/oauth/access_token")
@@ -13,12 +14,17 @@
 
 (defn oauth-authorize
   "Sends the user to Etsy's authorization endpoint."
-  [] (clojure.java.browse/browse-url (java.net.URLDecoder/decode *oauth-authorization-url*)))
+  [] (clojure.java.browse/browse-url (url-decode *oauth-authorization-url*)))
 
 (defn oauth-request-token
   "Obtain a OAuth request token from Etsy to request user authorization."
   [oauth-consumer-key oauth-consumer-secret oauth-callback scope]
-  (let [request-token (v1/oauth-request-token *oauth-request-token-url* consumer-key consumer-secret {:query-params {:scope scope} :oauth-callback oauth-callback})]
+  (let [request-token (v1/oauth-request-token
+                       *oauth-request-token-url*
+                       oauth-consumer-key
+                       oauth-consumer-secret
+                       {:query-params {:scope scope}
+                        :oauth-callback oauth-callback})]
     (alter-var-root #'*oauth-authorization-url* (fn [_] (:login-url request-token)))
     request-token))
 

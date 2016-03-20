@@ -9,6 +9,9 @@
                  [clj-http "2.1.0"]
                  [inflections "0.12.1"]
                  [org.clojure/clojure "1.8.0"]]
+  :aliases {"ci" ["do" ["test"] ["lint"]]
+            "lint" ["do"  ["eastwood"]]}
   :profiles {:dev {:dependencies [[org.slf4j/slf4j-log4j12 "1.7.19"]]
-                   :plugins [[lein-difftest "2.0.0"]]
+                   :plugins [[jonase/eastwood "0.2.3"]
+                             [lein-difftest "2.0.0"]]
                    :resource-paths ["test-resources"]}})
