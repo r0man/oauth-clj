@@ -7,7 +7,7 @@
   :deploy-repositories [["releases" :clojars]]
   :dependencies [[cheshire "5.5.0"]
                  [clj-http "2.1.0"]
-                 [inflections "0.12.0"]
+                 [inflections "0.12.1"]
                  [org.clojure/clojure "1.8.0"]]
   :profiles {:dev {:dependencies [[org.slf4j/slf4j-log4j12 "1.7.19"]]
                    :plugins [[lein-difftest "2.0.0"]]
