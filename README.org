@@ -1,4 +1,4 @@
-* OAUTH-CLJ
+* oauth-clj
 
   [[https://clojars.org/oauth-clj][https://img.shields.io/clojars/v/oauth-clj.svg]]
   [[https://travis-ci.org/r0man/oauth-clj][https://travis-ci.org/r0man/oauth-clj.svg]]
