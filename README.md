@@ -64,7 +64,7 @@ Make a clj-http OAuth client.
    consumer-key
    consumer-secret
    (:oauth-token access-token)
-   (:oauth-verifier access-token)))
+   (:oauth-token-secret access-token)))
 ```
 
 Post a Tweet ...
