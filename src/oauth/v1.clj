@@ -21,9 +21,14 @@
                                        (:query-params request))))
       (util/format-authorization)))
 
+(defn oauth-authorize-url
+  "Returns the authorization url"
+  [url oauth-token]
+  (format "%s?oauth_token=%s" url oauth-token))
+
 (defn oauth-authorize
   "Send the user to the authorization url via `browse-url`."
-  [url oauth-token] (browse-url (format "%s?oauth_token=%s" url oauth-token)))
+  [url oauth-token] (browse-url (oauth-authorize-url url oauth-token)))
 
 (defn oauth-signature-parameters
   "Returns the OAuth signature parameters from `request`."
