@@ -11,6 +11,8 @@
 
 ** Usage
 
+*** Twitter example
+
    #+BEGIN_SRC clojure
      (use 'oauth.twitter)
    #+END_SRC
@@ -75,8 +77,103 @@
        :body (str "status=setting%20up%20my%20twitter%20私のさえずりを設定する")})
    #+END_SRC
 
+*** Flickr example
+
+This differs from the Twitter example both because Flickr's requirements are a bit different, and
+because it comes from a client/server app. This code runs on my compojure-based server, but
+authentication requires in-browser confirmation by the user.
+
+  #+BEGIN_SRC clojure
+    (use '[oauth.flickr :as flickr])
+  #+END_SRC
+
+  Define your consumer key, secret, and callback.
+
+  #+BEGIN_SRC clojure
+    (def flickr-api-key "0123456789abcdef0123456789abcdef")
+    (def flickr-api-secret "fedcba9876543210")
+    (def flickr-callback-path "/oauth/callback")
+    (def flickr-api-server "https://api.flickr.com/services/rest/")
+  #+END_SRC
+
+  Toy mechanism for tracking Flickr auth requests, as they trampoline between this server, the
+  user's browser, and the Flickr server. (Can this be replaced with something cleaner?)
+
+  #+BEGIN_SRC clojure
+    (defonce request-map (atom {}))
+    (defn add-auth-request [{:keys [oauth-token oauth-token-secret oauth-verifier] :as request-token}]
+      (swap! request-map assoc oauth-token {:request-secret oauth-token-secret :request-verifier oauth-verifier}))
+    (defn clear-auth-request [request-token]
+      (swap! request-map dissoc request-token))
+    (defn get-auth-request [request-token]
+      (get @request-map request-token))
+
+    (defonce auth-map (atom {}))
+    (defn clear-auth [oauth-token]
+      (swap! auth-map dissoc oauth-token))
+    (defn add-auth [& {:keys [auth-token auth-secret username user-nsid client] :as auth-set}]
+      (swap! auth-map assoc auth-token auth-set))
+    (defn get-auth [auth-token]
+      (get @auth-map auth-token))
+  #+END_SRC
+
+  Obtain a OAuth request token from Flickr to request user authorization.
+
+  #+BEGIN_SRC clojure
+    (defn kickoff-flickr-auth [server-root]
+      (let [callback-url (str server-root flickr-callback-path)
+            flickr-token (flickr/oauth-request-token flickr-api-key flickr-api-secret callback-url)]
+        (add-auth-request flickr-token)
+        (ring.util.response/redirect (flickr/oauth-authorization-url (:oauth-token flickr-token)))))
+  #+END_SRC
+
+  Once the user oks the flickr request, flow continues with our callback.
+
+  #+BEGIN_SRC clojure
+    (defn flickr-oauth-callback-handler [& {request-token :oauth-token verifier :oauth-verifier}]
+      (let [request-secret (-> request-token get-auth-request :request-secret)
+            {:keys [username user-nsid oauth-token oauth-token-secret]} ;; Obtain the OAuth access token from Flickr
+                                                                        (flickr/oauth-access-token
+                                                                         flickr-api-key flickr-api-secret
+                                                                         request-token request-secret
+                                                                         verifier)
+            client (flickr/oauth-client
+                    flickr-api-key flickr-api-secret
+                    oauth-token oauth-token-secret)]
+        (clear-auth-request request-token)
+        (add-auth :auth-token oauth-token
+                  :auth-secret oauth-token-secret
+                  :username username
+                  :user-nsid user-nsid
+                  :client client)
+        (ring.util.response/redirect (str "/"
+                                          "?username=" username
+                                          "&user-nsid=" user-nsid
+                                          "&auth-token=" oauth-token
+                                          "&auth-secret=" oauth-token-secret))))
+  #+END_SRC
+
+  Add compojure routes to direct the requests.
+
+  #+BEGIN_SRC clojure
+    ;; Support fn, to ease using parallel dev and live servers
+    (defn get-base-uri [request]
+      "Generate a base uri from a ring request. For example 'http://localhost:5000/api'."
+      (let [scheme (name (:scheme request))
+            context (:context request)
+            hostname (get (:headers request) "host")]
+        (str scheme "://" hostname context)))
+
+
+    (defroutes ...
+      (GET "/kickoff" {:as request} (kickoff-flickr-auth (get-base-uri request)))
+      (GET "/oauth/callback" [oauth_token oauth_verifier]
+           (flickr-oauth-callback-handler :oauth-token oauth_token :oauth-verifier oauth_verifier)))
+  #+END_SRC
+
 ** License
 
    Copyright (C) 2012-2016 r0man
 
    Distributed under the Eclipse Public License, the same as Clojure.
+
