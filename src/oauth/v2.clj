@@ -6,7 +6,12 @@
             [oauth.io :refer [request]]))
 
 (defn- update-access-token [request access-token]
-  (assoc-in request [:query-params "access_token"] access-token))
+  (assoc-in
+   (assoc-in
+    request
+    [:query-params "access_token"]
+    access-token)
+   [:headers "Authorization" (str "token " access-token)]))
 
 (defn oauth-access-token
   "Obtain the OAuth access token."
