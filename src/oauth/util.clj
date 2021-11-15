@@ -70,12 +70,13 @@
   (cond
    (nil? obj) nil
    (instance? StringEntity obj)
-   (let [stream (.getContent (.clone obj))
+   (let [^StringEntity clone (.clone ^StringEntity obj)
+         stream (.getContent clone)
          buffer (byte-array (.available stream))]
      (.read stream buffer)
      (String. buffer))
    (byte-array? obj)
-   (String. obj)
+   (String. ^"[B" obj)
    :else (str obj)))
 
 (defn parse-body
