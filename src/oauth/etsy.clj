@@ -1,5 +1,6 @@
 (ns oauth.etsy
   (:require [clj-http.util :refer [url-decode]]
+            [clojure.java.browse]
             [oauth.v1 :as v1]))
 
 (def ^:dynamic *oauth-access-token-url*

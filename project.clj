@@ -12,6 +12,6 @@
   :aliases {"ci" ["do" ["test"] ["lint"]]
             "lint" ["do"  ["eastwood"]]}
   :profiles {:dev {:dependencies [[org.slf4j/slf4j-log4j12 "1.7.19"]]
-                   :plugins [[jonase/eastwood "0.2.3"]
+                   :plugins [[jonase/eastwood "0.9.9"]
                              [lein-difftest "2.0.0"]]
                    :resource-paths ["test-resources"]}})
