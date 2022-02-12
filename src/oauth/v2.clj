@@ -25,7 +25,7 @@
   "Returns the OAuth authorization url."
   [url client-id redirect-uri & {:as options}]
   (->> (assoc options :client-id client-id :redirect-uri redirect-uri)
-       (format-query-params)
+       format-query-params
        (str url "?")))
 
 (defn oauth-authorize
